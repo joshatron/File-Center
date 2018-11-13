@@ -1,0 +1,13 @@
+{
+    "name": "file-center",
+    "version": "0.1.0",
+    "description": "Simple file upload and download service",
+    "main": "server.js",
+    "author": "Joshatron",
+    "dependencies": {
+        "express": "~4.7.2",
+        "morgan": "~1.2.2",
+        "body-parser": "~1.5.2",
+        "method-override": "~2.1.2"
+    }
+}

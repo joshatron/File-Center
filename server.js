@@ -28,18 +28,18 @@ app.use(bodyParser.json());
 app.use(bodyParser.json({type: 'application/vnd.api+json'}));
 app.use(methodOverride());
 
-app.listen(8080);
-console.log('App started on port 8080');
-
 app.get('/api/files', function(request, response) {
     var files = fs.readdirSync(fileDir);
     response.json(files);
 });
 
 app.post('/api/upload', upload.any(), function(request, response, next) {
-    console.log(request.file);
+    response.send("Upload successful");
 });
 
-app.get('*', function(request, response) {
-    response.sendfile('./public/index.html')
+app.get('/', function(request, response) {
+    response.sendfile('./public/index.html');
 })
+
+app.listen(8080);
+console.log('App started on port 8080');

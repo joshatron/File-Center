@@ -1,13 +1,37 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="fileCenter">
 <head>
     <meta charset="UTF-8">
     <title>File Center</title>
+
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"><!-- load bootstrap -->
+    <style>
+        html                    { overflow-y:scroll; }
+        body                    { padding-top:50px; }
+        #file-list              { margin-bottom:30px; }
+    </style>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script><!-- load jquery -->
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js"></script><!-- load angular -->
+    <script src="core.js"></script>
 </head>
-<body>
-    <form action="/api/upload" method="post" enctype="multipart/form-data">
-        <input type="file" name="file" />
-        <input type="submit" value="upload" />
-    </form>
+<body ng-controller="mainController">
+    <div class="container">
+
+        <form action="/api/upload" method="post" enctype="multipart/form-data">
+            <input type="file" name="file" />
+            <input type="submit" value="upload" />
+        </form>
+
+        <div id="file-list" class="row">
+            <div class="col-sm-4 col-sm-offset-4">
+                <div class="checkbox" ng-repeat="file in files">
+                    <label>
+                        {{file}}
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

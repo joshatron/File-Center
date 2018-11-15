@@ -5,10 +5,10 @@
     "main": "server.js",
     "author": "Joshatron",
     "dependencies": {
-        "body-parser": "~1.5.2",
-        "express": "~4.7.2",
+        "body-parser": "^1.18.3",
+        "express": "^4.16.4",
         "method-override": "~2.1.2",
-        "morgan": "~1.2.2",
+        "morgan": "^1.9.1",
         "multer": "^1.4.1"
     }
 }

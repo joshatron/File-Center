@@ -1,3 +1,5 @@
+'use strict';
+
 var express = require('express');
 var app = express();
 var morgan = require('morgan');
@@ -29,7 +31,10 @@ app.use(bodyParser.json({type: 'application/vnd.api+json'}));
 app.use(methodOverride());
 
 app.get('/api/files', function(request, response) {
-    var files = fs.readdirSync(fileDir);
+    var files = [];
+    fs.readdirSync(fileDir).foreach(function(result) {
+        files.push({name: result});
+    });
     response.json(files);
 });
 
@@ -39,7 +44,7 @@ app.post('/api/upload', upload.any(), function(request, response, next) {
 
 app.get('/', function(request, response) {
     response.sendfile('./public/index.html');
-})
+});
 
 app.listen(8080);
 console.log('App started on port 8080');

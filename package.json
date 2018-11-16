@@ -4,6 +4,10 @@
     "description": "Simple file upload and download service",
     "main": "server.js",
     "author": "Joshatron",
+    "scripts": {
+        "start": "nodemon server.js",
+        "postinstall": "cd public && npm install"
+    },
     "dependencies": {
         "body-parser": "^1.18.3",
         "express": "^4.16.4",

@@ -5,9 +5,11 @@
     <title>File Center</title>
 
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"><!-- load bootstrap -->
+    <link rel="stylesheet" href="index.css">
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script><!-- load jquery -->
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js"></script><!-- load angular -->
+    <script src="node_modules/angular-smart-table/dist/smart-table.js"></script>
     <script src="core.js"></script>
 </head>
 <body ng-controller="mainController">
@@ -19,35 +21,39 @@
         </form>
 
         <div class="scroll-table">
-            <table st-table="files" class="table table-striped table-condensed col-md-7" multi-check-group>
-                <tr>
-                    <th class="fixedColumn col-md-1" title="Select All">
-                        <input type="checkbox" class="checkbox-lg" ng-click="selectAll()"
-                               ng-checked="isAllSelected()">
-                    </th>
-                    <th st-sort="file" class="st-sort-descent fixedColumn col-xs-10">File</th>
-                    <th class="col-xs-1">
-                        <button type="button" ng-click="downloadSelectedFiles()"
-                                class="btn btn-default pull-right" aria-haspopup="true" aria-expanded="false">
-                            <span>Download Selected</span>
-                        </button>
-                    </th>
-                </tr>
-                <tr st-select-row="row" ng-repeat="file in files">
-                    <td class="fixedColumn col-xs-1"
-                        title="{{file.name}}">
-                        <input type="checkbox" class="checkbox-lg"
-                            ng-model="selectedFiles[file.name]"
-                            style="vertical-align:middle" multi-check>
-                    </td>
-                    <td class="fixedColumn col-xs-10"> {{file.name}}</td>
-                    <td class="fixedColumn col-xs-1">
-                        <button type="button" ng-click="downloadFile(file.name)"
-                                class="btn btn-default pull-right" aria-haspopup="true" aria-expanded="false">
-                            <span>Download</span>
-                        </button>
-                    </td>
-                </tr>
+            <table st-table="displayedFiles" st-safe-src="files" class="table table-striped table-condensed col-md-7" multi-check-group>
+                <thead>
+                    <tr>
+                        <th class="fixedColumn col-md-1" title="Select All">
+                            <input type="checkbox" class="checkbox-lg" ng-click="selectAll()"
+                                   ng-checked="isAllSelected()">
+                        </th>
+                        <th st-sort="name" st-sort-default="true" class="fixedColumn col-xs-10">File</th>
+                        <th class="col-xs-1">
+                            <button type="button" ng-click="downloadSelectedFiles()"
+                                    class="btn btn-default pull-right" aria-haspopup="true" aria-expanded="false">
+                                <span>Download Selected</span>
+                            </button>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="file in displayedFiles">
+                        <td class="fixedColumn col-xs-1"
+                            title="{{file.name}}">
+                            <input type="checkbox" class="checkbox-lg"
+                                ng-model="selectedFiles[file.name]"
+                                style="vertical-align:middle" multi-check>
+                        </td>
+                        <td class="fixedColumn col-xs-10"> {{file.name}}</td>
+                        <td class="fixedColumn col-xs-1">
+                            <button type="button" ng-click="downloadFile(file.name)"
+                                    class="btn btn-default pull-right" aria-haspopup="true" aria-expanded="false">
+                                <span>Download</span>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
             </table>
         </div>
     </div>

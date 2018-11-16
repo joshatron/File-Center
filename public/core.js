@@ -1,20 +1,24 @@
 'use strict';
 
-var fileCenter = angular.module('fileCenter', []);
+var fileCenter = angular.module('fileCenter', ['smart-table']);
 
-function mainController($scope, $http) {
+fileCenter.controller('mainController', ['$scope', '$http', function ($scope, $http) {
     $scope.selectedFiles = {};
     $scope.files = [];
-    $http.get('api/files').success(function(data) {
-        $scope.files = data;
-        console.log("Successfully found files:");
-        console.log($scope.files);
-    }).error(function(data) {
-        console.log("Error getting files: " + data);
-    });
+
+    $scope.getFiles = function() {
+        $http.get('api/files').then(function (result) {
+            $scope.files = result.data;
+            console.log("Successfully found files:");
+            console.log($scope.files);
+        });
+    };
+
+    $scope.getFiles();
 
     $scope.downloadFile = function(file) {
         console.log("Downloading: " + file);
+        $scope.getFiles();
     };
 
     $scope.downloadSelectedFiles = function() {
@@ -43,4 +47,4 @@ function mainController($scope, $http) {
             $scope.selectedFiles[result.name] = selectAll;
         });
     };
-}
+}])

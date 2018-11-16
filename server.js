@@ -32,7 +32,7 @@ app.use(methodOverride());
 
 app.get('/api/files', function(request, response) {
     var files = [];
-    fs.readdirSync(fileDir).foreach(function(result) {
+    fs.readdirSync(fileDir).forEach(function(result) {
         files.push({name: result});
     });
     response.json(files);

@@ -35,14 +35,14 @@
                 </tr>
                 <tr st-select-row="row" ng-repeat="file in files">
                     <td class="fixedColumn col-xs-1"
-                        title="{{file}}">
+                        title="{{file.name}}">
                         <input type="checkbox" class="checkbox-lg"
-                            ng-model="selectedFiles[file]"
+                            ng-model="selectedFiles[file.name]"
                             style="vertical-align:middle" multi-check>
                     </td>
-                    <td class="fixedColumn col-xs-10"> {{file}}</td>
+                    <td class="fixedColumn col-xs-10"> {{file.name}}</td>
                     <td class="fixedColumn col-xs-1">
-                        <button type="button" ng-click="downloadFile(file)"
+                        <button type="button" ng-click="downloadFile(file.name)"
                                 class="btn btn-default pull-right" aria-haspopup="true" aria-expanded="false">
                             <span>Download</span>
                         </button>

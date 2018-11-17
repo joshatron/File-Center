@@ -42,6 +42,10 @@ app.post('/api/upload', upload.any(), function(request, response, next) {
     response.send("Upload successful");
 });
 
+app.get('/api/download/:name', function(request, response) {
+    response.sendfile(fileDir + '/' + request.params.name);
+});
+
 app.get('/', function(request, response) {
     response.sendfile('./public/index.html');
 });

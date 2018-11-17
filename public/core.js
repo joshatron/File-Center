@@ -13,12 +13,13 @@ fileCenter.controller('mainController', ['$scope', '$http', function ($scope, $h
             console.log($scope.files);
         });
     };
-
     $scope.getFiles();
 
     $scope.downloadFile = function(file) {
         console.log("Downloading: " + file);
-        $scope.getFiles();
+        $http.get('api/download/' + file).then(function (result) {
+            download(result.data, file);
+        });
     };
 
     $scope.downloadSelectedFiles = function() {

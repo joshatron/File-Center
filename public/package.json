@@ -9,6 +9,7 @@
   "author": "Joshua Leger",
   "license": "MIT",
   "dependencies": {
-    "angular-smart-table": "^2.1.11"
+    "angular-smart-table": "^2.1.11",
+    "downloadjs": "^1.4.7"
   }
 }

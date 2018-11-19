@@ -15,11 +15,17 @@ fileCenter.controller('mainController', ['$scope', '$http', function ($scope, $h
     };
     $scope.getFiles();
 
-    $scope.downloadFile = function(file) {
+    $scope.getFile = function(file) {
         console.log("Downloading: " + file);
-        $http.get('api/download/' + file).then(function (result) {
-            download(result.data, file);
+        return $http.get('api/download/' + file).then(function (result) {
+            return result.data;
         });
+    };
+
+    $scope.downloadFile = function(file) {
+        $scope.getFile(file).then(function (result) {
+            download(result, file);
+        })
     };
 
     $scope.downloadSelectedFiles = function() {
@@ -31,8 +37,18 @@ fileCenter.controller('mainController', ['$scope', '$http', function ($scope, $h
         console.log("Downloading selected:");
         console.log(toDownload);
 
-        toDownload.forEach(function(result) {
-            $scope.downloadFile(result);
+        var zip = JSZip();
+        var processed = 0;
+        toDownload.forEach(function(file) {
+            $scope.getFile(file).then(function (result) {
+                zip.file(file, result);
+                processed++;
+                if(processed === toDownload.length) {
+                    zip.generateAsync({type: 'blob'}).then(function (blob) {
+                        saveAs(blob, 'file-center-download.zip');
+                    });
+                }
+            });
         });
     };
 

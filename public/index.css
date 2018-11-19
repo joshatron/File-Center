@@ -5,3 +5,13 @@
 .st-sort-descent:before{
     content: '\25BC';
 }
+
+.drop-box {
+    background: #F8F8F8;
+    border: 5px dashed #DDD;
+    height: 75px;
+    text-align: center;
+    padding-top: 25px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}

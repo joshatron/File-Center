@@ -1,10 +1,12 @@
 'use strict';
 
-var fileCenter = angular.module('fileCenter', ['smart-table']);
+var fileCenter = angular.module('fileCenter', ['smart-table', 'ngFileUpload']);
 
-fileCenter.controller('mainController', ['$scope', '$http', function ($scope, $http) {
+fileCenter.controller('mainController', ['$scope', "$http", 'Upload', function ($scope, $http, Upload) {
     $scope.selectedFiles = {};
     $scope.files = [];
+    $scope.displayedFiles = [];
+    $scope.filesToUpload = [];
 
     $scope.getFiles = function() {
         $http.get('api/files').then(function (result) {
@@ -14,6 +16,28 @@ fileCenter.controller('mainController', ['$scope', '$http', function ($scope, $h
         });
     };
     $scope.getFiles();
+
+    $scope.$watch('filesToUpload', function () {
+        $scope.uploadFiles($scope.filesToUpload);
+    });
+
+    $scope.uploadFiles = function(toUpload) {
+        console.log(toUpload);
+        var processed = 0;
+        toUpload.forEach(function(file) {
+            Upload.upload({
+                url: '/api/upload',
+                data: {
+                    file: file
+                }
+            }).then(function (result) {
+                processed++;
+                if(processed === toUpload.length) {
+                    $scope.getFiles();
+                }
+            });
+        });
+    };
 
     $scope.getFile = function(file) {
         console.log("Downloading: " + file);
@@ -53,14 +77,14 @@ fileCenter.controller('mainController', ['$scope', '$http', function ($scope, $h
     };
 
     $scope.isAllSelected = function () {
-        return $scope.files.every(function (result) {
+        return $scope.displayedFiles.every(function (result) {
             return $scope.selectedFiles[result.name];
         });
     };
 
     $scope.selectAll = function () {
         var selectAll = !$scope.isAllSelected();
-        $scope.files.forEach(function (result) {
+        $scope.displayedFiles.forEach(function (result) {
             $scope.selectedFiles[result.name] = selectAll;
         });
     };

@@ -25,9 +25,9 @@ var upload = multer({storage: storage});
 
 app.use(express.static(__dirname + '/public'));
 app.use(morgan('dev'));
-app.use(bodyParser.urlencoded({'extended':'true'}));
-app.use(bodyParser.json());
-app.use(bodyParser.json({type: 'application/vnd.api+json'}));
+app.use(bodyParser.urlencoded({extended:'true', limit: '1tb'}));
+app.use(bodyParser.json({limit: '1tb'}));
+app.use(bodyParser.json({type: 'application/vnd.api+json', limit: '1tb'}));
 app.use(methodOverride());
 
 app.get('/api/files', function(request, response) {

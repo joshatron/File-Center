@@ -5,7 +5,7 @@
     "main": "server.js",
     "author": "Joshatron",
     "scripts": {
-        "start": "nodemon server.js",
+        "start": "nodemon --ignore 'files/' server.js",
         "postinstall": "cd public && npm install"
     },
     "dependencies": {

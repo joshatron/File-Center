@@ -17,19 +17,19 @@
 .drop-box {
     background: #F8F8F8;
     border: 5px dashed #DDD;
-    height: 75px;
+    height: 100px;
     text-align: center;
-    padding-top: 25px;
-    margin-top: 10px;
-    margin-bottom: 10px;
+    padding-top: 30px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    font-size: 20px;
 }
 
 #header {
-    background: darkslategray;
+    background: #2C3E50;
     height: 70px;
     width: 100%;
     padding-top: 10px;
-    margin-bottom: 10px;
     text-align: center;
     color: #F8F8F8;
     font-size: 30px;

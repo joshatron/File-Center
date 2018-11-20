@@ -7,6 +7,7 @@ var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
 var fs = require('fs');
 var multer = require('multer');
+var path = require('path');
 
 var fileDir = "./files";
 if(!fs.existsSync(fileDir)) {
@@ -43,11 +44,11 @@ app.post('/api/upload', upload.any(), function(request, response, next) {
 });
 
 app.get('/api/download/:name', function(request, response) {
-    response.sendfile(fileDir + '/' + request.params.name);
+    response.sendFile(path.join(__dirname, fileDir, request.params.name));
 });
 
 app.get('/', function(request, response) {
-    response.sendfile('./public/index.html');
+    response.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 app.listen(8080);

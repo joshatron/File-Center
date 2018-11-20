@@ -44,7 +44,7 @@ app.post('/api/upload', upload.any(), function(request, response, next) {
 });
 
 app.get('/api/download/:name', function(request, response) {
-    response.sendFile(path.join(__dirname, fileDir, request.params.name));
+    response.download(path.join(__dirname, fileDir, request.params.name));
 });
 
 app.get('/', function(request, response) {

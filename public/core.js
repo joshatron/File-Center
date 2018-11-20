@@ -41,14 +41,14 @@ fileCenter.controller('mainController', ['$scope', "$http", 'Upload', function (
 
     $scope.getFile = function(file) {
         console.log("Downloading: " + file);
-        return $http.get('api/download/' + file).then(function (result) {
+        return $http.get('api/download/' + file, {responseType: 'blob'}).then(function (result) {
             return result.data;
         });
     };
 
     $scope.downloadFile = function(file) {
         $scope.getFile(file).then(function (result) {
-            download(result, file);
+            saveAs(result, file);
         })
     };
 

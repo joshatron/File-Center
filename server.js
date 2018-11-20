@@ -9,7 +9,7 @@ var fs = require('fs');
 var multer = require('multer');
 var path = require('path');
 
-var fileDir = "./files";
+var fileDir = path.join(__dirname, 'files');
 if(!fs.existsSync(fileDir)) {
     fs.mkdirSync(fileDir);
 }
@@ -24,7 +24,8 @@ var storage = multer.diskStorage({
 });
 var upload = multer({storage: storage});
 
-app.use(express.static(__dirname + '/public'));
+app.use(express.static(path.join(__dirname,  'public')));
+app.use(express.static(path.join(__dirname,  'files')));
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({extended:'true', limit: '1tb'}));
 app.use(bodyParser.json({limit: '1tb'}));
@@ -33,10 +34,19 @@ app.use(methodOverride());
 
 app.get('/api/files', function(request, response) {
     var files = [];
-    fs.readdirSync(fileDir).forEach(function(result) {
-        files.push({name: result});
+    fs.readdir(fileDir, function(error, contents) {
+        var processed = 0;
+        contents.forEach(function (file) {
+            fs.stat(path.join(fileDir, file), function (error, stats) {
+                files.push({name: file, size: stats["size"]});
+                processed++;
+
+                if(processed === contents.length) {
+                    response.json(files);
+                }
+            });
+        });
     });
-    response.json(files);
 });
 
 app.post('/api/upload', upload.any(), function(request, response, next) {

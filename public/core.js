@@ -88,4 +88,22 @@ fileCenter.controller('mainController', ['$scope', "$http", 'Upload', function (
             $scope.selectedFiles[result.name] = selectAll;
         });
     };
+
+    $scope.printFileSize = function (size) {
+        if(size >= 1000000000000) {
+            return Math.round(size / 1000000000000) + " TB";
+        }
+        else if(size >= 1000000000) {
+            return Math.round(size / 1000000000) + " GB";
+        }
+        else if(size >= 1000000) {
+            return Math.round(size / 1000000) + " MB";
+        }
+        else if(size >= 1000) {
+            return Math.round(size / 1000) + " KB";
+        }
+        else {
+            return size;
+        }
+    }
 }])

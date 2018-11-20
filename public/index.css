@@ -1,9 +1,17 @@
-.st-sort-ascent:before{
+.st-sort-ascent:before {
     content: '\25B2';
 }
 
-.st-sort-descent:before{
+.st-sort-descent:before {
     content: '\25BC';
+}
+
+.table-header {
+    font-size: 16px;
+}
+
+.main-table {
+    border: 5px darkslategray;
 }
 
 .drop-box {
@@ -14,4 +22,15 @@
     padding-top: 25px;
     margin-top: 10px;
     margin-bottom: 10px;
+}
+
+#header {
+    background: darkslategray;
+    height: 70px;
+    width: 100%;
+    padding-top: 10px;
+    margin-bottom: 10px;
+    text-align: center;
+    color: #F8F8F8;
+    font-size: 30px;
 }

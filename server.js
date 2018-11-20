@@ -25,7 +25,6 @@ var storage = multer.diskStorage({
 var upload = multer({storage: storage});
 
 app.use(express.static(path.join(__dirname,  'public')));
-app.use(express.static(path.join(__dirname,  'files')));
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({extended:'true', limit: '1tb'}));
 app.use(bodyParser.json({limit: '1tb'}));

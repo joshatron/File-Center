@@ -25,6 +25,12 @@
     font-size: 20px;
 }
 
+.word-wrap {
+    word-break: break-all;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
 #header {
     background: #2C3E50;
     height: 70px;

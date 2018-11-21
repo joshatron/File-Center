@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" ng-app="fileCenter">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
     <title>File Center</title>
 
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"><!-- load bootstrap -->
@@ -19,13 +19,13 @@
     <div id="header">Josh's File Center</div>
 
     <div class="container">
-        <div ngf-drop ngf-select ng-model="filesToUpload" class="drop-box col-xs-12"
+        <div ngf-drop ngf-select ng-model="filesToUpload" class="drop-box"
              ngf-drag-over-class="'dragover'" ngf-multiple="true" ngf-allow-dir="true"
              accept="*/*,"
              ngf-pattern="'*/*,'">Upload files here</div>
 
         <div class="scroll-table">
-            <table st-table="displayedFiles" st-safe-src="files" class="table table-striped table-condensed col-md-7" multi-check-group>
+            <table st-table="displayedFiles" st-safe-src="files" class="table table-striped table-condensed hidden-xs" multi-check-group>
                 <thead>
                     <tr>
                         <th class="fixedColumn" colspan="4">
@@ -68,6 +68,47 @@
                 <tfoot>
                 </tfoot>
             </table>
+            <table st-table="displayedFiles" st-safe-src="files" class="table table-striped table-condensed hidden-sm hidden-md hidden-lg" multi-check-group>
+                <thead>
+                    <tr>
+                        <th class="fixedColumn" colspan="3">
+                            <input st-search="name" placeholder="file search" class="input-sm form-control" type="search"/>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th class="fixedColumn col-xs-1">
+                            <input type="checkbox" class="checkbox-lg" ng-click="selectAll()" ng-checked="isAllSelected()" title="Select All">
+                        </th>
+                        <th st-sort="name" st-sort-default="true" class="fixedColumn col-xs-10 table-header">File</th>
+                        <th class="col-xs-1">
+                            <button type="button" ng-click="downloadSelectedFiles()"
+                                    class="btn btn-default pull-right" aria-haspopup="true" aria-expanded="false">
+                                <span class="glyphicon glyphicon-download-alt"></span>
+                                <span>Selected</span>
+                            </button>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="file in displayedFiles">
+                        <td class="fixedColumn">
+                            <input title="{{file.name}}" type="checkbox" class="checkbox-lg"
+                                ng-model="selectedFiles[file.name]"
+                                style="vertical-align:middle" multi-check>
+                        </td>
+                        <td class="fixedColumn word-wrap"> {{file.name}}</td>
+                        <td class="fixedColumn">
+                            <button type="button" ng-click="downloadFile(file.name)"
+                                    class="btn btn-default pull-right" aria-haspopup="true" aria-expanded="false">
+                                <span class="glyphicon glyphicon-download-alt"></span>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                </tfoot>
+            </table>
+
         </div>
     </div>
 </body>

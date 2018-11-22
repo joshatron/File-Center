@@ -3,6 +3,7 @@
 var fileCenter = angular.module('fileCenter', ['smart-table', 'ngFileUpload']);
 
 fileCenter.controller('mainController', ['$scope', "$http", 'Upload', function ($scope, $http, Upload) {
+    $scope.message = 'Josh\'s File Center';
     $scope.selectedFiles = {};
     $scope.files = [];
     $scope.displayedFiles = [];

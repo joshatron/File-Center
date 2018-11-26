@@ -4,6 +4,8 @@
     "description": "Simple file upload and download service",
     "main": "server.js",
     "author": "Joshatron",
+    "repository": "https://github.com/joshatron/File-Center",
+    "license": "MIT",
     "scripts": {
         "start": "nodemon --ignore 'files/' server.js",
         "postinstall": "cd public && npm install"
@@ -13,6 +15,7 @@
         "express": "^4.16.4",
         "method-override": "~2.1.2",
         "morgan": "^1.9.1",
-        "multer": "^1.4.1"
+        "multer": "^1.4.1",
+        "nodemon": "^1.18.6"
     }
 }

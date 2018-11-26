@@ -47,10 +47,8 @@ fileCenter.controller('mainController', ['$scope', "$http", 'Upload', function (
         });
     };
 
-    $scope.downloadFile = function(file) {
-        $scope.getFile(file).then(function (result) {
-            saveAs(result, file);
-        })
+    $scope.downloadCall = function(file) {
+        return "api/download/" + file;
     };
 
     $scope.downloadSelectedFiles = function() {

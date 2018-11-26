@@ -57,11 +57,13 @@
                         <td class="fixedColumn"> {{file.name}}</td>
                         <td class="fixedColumn"> {{printFileSize(file.size)}}</td>
                         <td class="fixedColumn">
-                            <button type="button" ng-click="downloadFile(file.name)"
-                                    class="btn btn-default pull-right" aria-haspopup="true" aria-expanded="false">
-                                <span class="glyphicon glyphicon-download-alt"></span>
-                                <span>Download</span>
-                            </button>
+                            <form method="get" action="{{downloadCall(file.name)}}">
+                                <button type="submit"
+                                        class="btn btn-default pull-right" aria-haspopup="true" aria-expanded="false">
+                                    <span class="glyphicon glyphicon-download-alt"></span>
+                                    <span>Download</span>
+                                </button>
+                            </form>
                         </td>
                     </tr>
                 </tbody>

@@ -8,6 +8,7 @@ var methodOverride = require('method-override');
 var fs = require('fs');
 var multer = require('multer');
 var path = require('path');
+var zip = require('express-zip');
 
 var fileDir = path.join(__dirname, 'files');
 if(!fs.existsSync(fileDir)) {
@@ -54,6 +55,13 @@ app.post('/api/upload', upload.any(), function(request, response, next) {
 
 app.get('/api/download/:name', function(request, response) {
     response.download(path.join(fileDir, request.params.name));
+});
+
+app.post('/api/downloadzip', function(request, response) {
+    var toZip = JSON.parse(request.body.files).map(function(result) {
+        return {path: path.join(fileDir, result), name: result};
+    });
+    response.zip(toZip, 'file-center-download.zip');
 });
 
 app.get('/', function(request, response) {

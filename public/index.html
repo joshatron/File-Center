@@ -39,11 +39,13 @@
                         <th st-sort="name" st-sort-default="true" class="fixedColumn col-xs-5 table-header">File</th>
                         <th st-sort="size" st-sort-default="false" class="fixedColumn col-xs-5 table-header">Size</th>
                         <th class="col-xs-1">
-                            <button type="button" ng-click="downloadSelectedFiles()"
-                                    class="btn btn-default pull-right" aria-haspopup="true" aria-expanded="false">
-                                <span class="glyphicon glyphicon-download-alt"></span>
-                                <span>Download Selected</span>
-                            </button>
+                            <form method="post" action="api/downloadzip">
+                                <button type="submit" name="files" value="{{getToZip()}}"
+                                        class="btn btn-default pull-right" aria-haspopup="true" aria-expanded="false">
+                                    <span class="glyphicon glyphicon-download-alt"></span>
+                                    <span>Download Selected</span>
+                                </button>
+                            </form>
                         </th>
                     </tr>
                 </thead>
@@ -83,11 +85,13 @@
                         </th>
                         <th st-sort="name" st-sort-default="true" class="fixedColumn col-xs-10 table-header">File</th>
                         <th class="col-xs-1">
-                            <button type="button" ng-click="downloadSelectedFiles()"
-                                    class="btn btn-default pull-right" aria-haspopup="true" aria-expanded="false">
-                                <span class="glyphicon glyphicon-download-alt"></span>
-                                <span>Selected</span>
-                            </button>
+                            <form method="post" action="api/downloadzip">
+                                <button type="submit" name="files" value="{{getToZip()}}"
+                                        class="btn btn-default pull-right" aria-haspopup="true" aria-expanded="false">
+                                    <span class="glyphicon glyphicon-download-alt"></span>
+                                    <span>Selected</span>
+                                </button>
+                            </form>
                         </th>
                     </tr>
                 </thead>
@@ -100,10 +104,12 @@
                         </td>
                         <td class="fixedColumn word-wrap"> {{file.name}}</td>
                         <td class="fixedColumn">
-                            <button type="button" ng-click="downloadFile(file.name)"
-                                    class="btn btn-default pull-right" aria-haspopup="true" aria-expanded="false">
-                                <span class="glyphicon glyphicon-download-alt"></span>
-                            </button>
+                            <form method="get" action="{{downloadCall(file.name)}}">
+                                <button type="submit"
+                                        class="btn btn-default pull-right" aria-haspopup="true" aria-expanded="false">
+                                    <span class="glyphicon glyphicon-download-alt"></span>
+                                </button>
+                            </form>
                         </td>
                     </tr>
                 </tbody>

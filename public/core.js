@@ -51,28 +51,14 @@ fileCenter.controller('mainController', ['$scope', "$http", 'Upload', function (
         return "api/download/" + file;
     };
 
-    $scope.downloadSelectedFiles = function() {
+    $scope.getToZip = function() {
         var toDownload = $scope.files.filter(function(result) {
             return $scope.selectedFiles[result.name];
         }).map(function(result) {
             return result.name;
         });
-        console.log("Downloading selected:");
-        console.log(toDownload);
 
-        var zip = JSZip();
-        var processed = 0;
-        toDownload.forEach(function(file) {
-            $scope.getFile(file).then(function (result) {
-                zip.file(file, result);
-                processed++;
-                if(processed === toDownload.length) {
-                    zip.generateAsync({type: 'blob'}).then(function (blob) {
-                        saveAs(blob, 'file-center-download.zip');
-                    });
-                }
-            });
-        });
+        return toDownload;
     };
 
     $scope.isAllSelected = function () {

@@ -3,11 +3,15 @@
 var fileCenter = angular.module('fileCenter', ['smart-table', 'ngFileUpload']);
 
 fileCenter.controller('mainController', ['$scope', "$http", 'Upload', function ($scope, $http, Upload) {
-    $scope.message = 'Josh\'s File Center';
+    $scope.message = 'File Center';
     $scope.selectedFiles = {};
     $scope.files = [];
     $scope.displayedFiles = [];
     $scope.filesToUpload = [];
+
+    $http.get('api/banner').then(function (result) {
+        $scope.message = result.data;
+    });
 
     $scope.getFiles = function() {
         $http.get('api/files').then(function (result) {
@@ -88,7 +92,7 @@ fileCenter.controller('mainController', ['$scope', "$http", 'Upload', function (
             return Math.round(size / 1000) + " KB";
         }
         else {
-            return size;
+            return size + " B";
         }
     }
 }])

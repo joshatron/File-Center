@@ -10,7 +10,16 @@ var multer = require('multer');
 var path = require('path');
 var zip = require('express-zip');
 
+var config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config', 'config.json'), 'utf8'));
+if(config !== undefined) {
+    console.log("Config: ");
+    console.log(config);
+}
+
 var fileDir = path.join(__dirname, 'files');
+if(config.dir !== undefined) {
+    fileDir = config.dir;
+}
 if(!fs.existsSync(fileDir)) {
     fs.mkdirSync(fileDir);
 }
@@ -49,6 +58,15 @@ app.get('/api/files', function(request, response) {
     });
 });
 
+app.get('/api/banner', function (request, response) {
+    if(config.banner === undefined) {
+        response.send("File Center");
+    }
+    else {
+        response.send(config.banner);
+    }
+});
+
 app.post('/api/upload', upload.any(), function(request, response, next) {
     response.send("Upload successful");
 });
@@ -68,5 +86,11 @@ app.get('/', function(request, response) {
     response.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.listen(8080);
-console.log('App started on port 8080');
+if(config.port === undefined) {
+    app.listen(8080);
+    console.log('App started on port 8080');
+}
+else {
+    app.listen(config.port);
+    console.log('App started on port ' + config.port);
+}

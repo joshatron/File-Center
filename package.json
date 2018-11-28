@@ -1,13 +1,14 @@
 {
     "name": "file-center",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "description": "Simple file upload and download service",
     "main": "server.js",
     "author": "Joshatron",
     "repository": "https://github.com/joshatron/File-Center",
     "license": "MIT",
     "scripts": {
-        "start": "nodemon --ignore 'files/' --ignore 'public/' server.js",
+        "start-watch": "nodemon --ignore 'files/' --ignore 'public/' server.js",
+        "start": "node server.js",
         "postinstall": "cd public && npm install"
     },
     "dependencies": {

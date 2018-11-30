@@ -41,20 +41,42 @@ app.use(bodyParser.json({limit: '1tb'}));
 app.use(bodyParser.json({type: 'application/vnd.api+json', limit: '1tb'}));
 app.use(methodOverride());
 
-app.get('/api/files', function(request, response) {
+var getFiles = function(dir, done) {
     var files = [];
-    fs.readdir(fileDir, function(error, contents) {
+    fs.readdir(dir, function(error, contents) {
         var processed = 0;
         contents.forEach(function (file) {
-            fs.stat(path.join(fileDir, file), function (error, stats) {
-                files.push({name: file, size: stats["size"]});
-                processed++;
+            fs.stat(path.join(dir, file), function (error, stats) {
+                if(stats.isDirectory()) {
+                    getFiles(path.join(dir, file), function(error, dirContents) {
+                        var sum = 0;
+                        dirContents.forEach(function (f) {
+                            sum += f.size;
+                        });
+                        files.push({name: file, size: sum, type: 'directory', contents: dirContents});
+                        processed++;
 
-                if(processed === contents.length) {
-                    response.json(files);
+                        if (processed === contents.length) {
+                            done(null, files);
+                        }
+                    });
+                }
+                else {
+                    files.push({name: file, size: stats["size"], type: 'file'});
+                    processed++;
+
+                    if (processed === contents.length) {
+                        done(null, files);
+                    }
                 }
             });
         });
+    });
+};
+
+app.get('/api/files', function(request, response) {
+    getFiles(fileDir, function(error, files) {
+        response.json(files);
     });
 });
 

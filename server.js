@@ -74,6 +74,38 @@ var getFiles = function(dir, done) {
     });
 };
 
+var getZipFiles = function(files, done) {
+    var toZip = [];
+    var processed = 0;
+    files.forEach(function(file) {
+        fs.stat(path.join(fileDir, file), function(error, stats) {
+            if(stats.isDirectory()) {
+                fs.readdir(path.join(fileDir, file), function(error, contents) {
+                    contents = contents.map(function(result) {
+                        return path.join(file, result);
+                    });
+                    getZipFiles(contents, function(error, results) {
+                        toZip = toZip.concat(results);
+                        processed++;
+
+                        if (processed === files.length) {
+                            done(null, toZip);
+                        }
+                    })
+                })
+            }
+            else {
+                toZip.push({path: path.join(fileDir, file), name: file});
+                processed++;
+
+                if (processed === files.length) {
+                    done(null, toZip);
+                }
+            }
+        });
+    });
+};
+
 app.get('/api/files', function(request, response) {
     getFiles(fileDir, function(error, files) {
         response.json(files);
@@ -94,14 +126,22 @@ app.post('/api/upload', upload.any(), function(request, response, next) {
 });
 
 app.get('/api/download/:name', function(request, response) {
-    response.download(path.join(fileDir, request.params.name));
+    fs.stat(path.join(fileDir, request.params.name), function (error, stats) {
+        if(stats.isDirectory()) {
+            getZipFiles([request.params.name], function(error, results) {
+                response.zip(results, request.params.name + '.zip');
+            });
+        }
+        else {
+            response.download(path.join(fileDir, request.params.name));
+        }
+    });
 });
 
 app.post('/api/downloadzip', function(request, response) {
-    var toZip = JSON.parse(request.body.files).map(function(result) {
-        return {path: path.join(fileDir, result), name: result};
+    getZipFiles(JSON.parse(request.body.files), function(error, results) {
+        response.zip(results, 'file-center-download.zip');
     });
-    response.zip(toZip, 'file-center-download.zip');
 });
 
 app.get('/', function(request, response) {

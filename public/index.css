@@ -31,6 +31,10 @@
     overflow-wrap: break-word;
 }
 
+.glyphicon-folder-open:before {
+    margin-right: 6px;
+}
+
 #header {
     background: #2C3E50;
     height: 70px;

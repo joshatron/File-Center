@@ -129,7 +129,7 @@ app.get('/api/download/:name', function(request, response) {
     fs.stat(path.join(fileDir, request.params.name), function (error, stats) {
         if(stats.isDirectory()) {
             getZipFiles([request.params.name], function(error, results) {
-                response.zip(results, request.params.name + '.zip');
+                response.zip(results, request.params.name.split('/').pop() + '.zip');
             });
         }
         else {

@@ -6,6 +6,7 @@ fileCenter.controller('mainController', ['$scope', "$http", 'Upload', function (
     $scope.message = 'File Center';
     $scope.selectedFiles = {};
     $scope.files = [];
+    $scope.currentFiles = [];
     $scope.displayedFiles = [];
     $scope.filesToUpload = [];
 
@@ -16,6 +17,7 @@ fileCenter.controller('mainController', ['$scope', "$http", 'Upload', function (
     $scope.getFiles = function() {
         $http.get('api/files').then(function (result) {
             $scope.files = result.data;
+            $scope.currentFiles = result.data;
             console.log("Successfully found files:");
             console.log($scope.files);
         });
@@ -76,6 +78,18 @@ fileCenter.controller('mainController', ['$scope', "$http", 'Upload', function (
         $scope.displayedFiles.forEach(function (result) {
             $scope.selectedFiles[result.name] = selectAll;
         });
+    };
+
+    $scope.moveDir = function(file) {
+
+        var found = $scope.currentFiles.find(function (element) {
+            return element.name === file;
+        });
+
+        if (found.type === 'directory') {
+            console.log('moving into ' + file);
+            $scope.currentFiles = found.contents;
+        }
     };
 
     $scope.printFileSize = function (size) {

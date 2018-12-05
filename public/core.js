@@ -18,7 +18,16 @@ fileCenter.controller('mainController', ['$scope', "$http", 'Upload', function (
     $scope.getFiles = function() {
         $http.get('api/files').then(function (result) {
             $scope.files = result.data;
-            $scope.currentFiles = result.data;
+            $scope.currentFiles = $scope.files;
+            $scope.currentDirectory = [];
+            /*if($scope.currentDirectory.length > 0) {
+                $scope.currentDirectory.forEach(function (folder) {
+                    var found = $scope.currentFiles.find(function (element) {
+                        return element.name === folder;
+                    });
+                    $scope.currentFiles = found.contents;
+                });
+            }*/
         });
     };
     $scope.getFiles();
@@ -41,13 +50,17 @@ fileCenter.controller('mainController', ['$scope', "$http", 'Upload', function (
 
     $scope.uploadFiles = function(toUpload) {
         var processed = 0;
+        var dir = $scope.joinDirectory();
         toUpload.forEach(function(file) {
             Upload.upload({
                 url: '/api/upload',
                 data: {
                     file: file
+                },
+                params: {
+                    dir: dir
                 }
-            }).then(function (result) {
+            }).then(function() {
                 processed++;
                 if(processed === toUpload.length) {
                     $scope.getFiles();
@@ -84,7 +97,6 @@ fileCenter.controller('mainController', ['$scope', "$http", 'Upload', function (
     };
 
     $scope.moveDir = function(file) {
-
         var found = $scope.currentFiles.find(function (element) {
             return element.name === file;
         });
@@ -92,6 +104,19 @@ fileCenter.controller('mainController', ['$scope', "$http", 'Upload', function (
         if (found.type === 'directory') {
             $scope.currentFiles = found.contents;
             $scope.currentDirectory.push(found.name);
+        }
+    };
+
+    $scope.moveUpDir = function() {
+        $scope.currentDirectory.pop();
+        $scope.currentFiles = $scope.files;
+        if($scope.currentDirectory.length > 0) {
+            $scope.currentDirectory.forEach(function (folder) {
+                var found = $scope.currentFiles.find(function (element) {
+                    return element.name === folder;
+                });
+                $scope.currentFiles = found.contents;
+            });
         }
     };
 

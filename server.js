@@ -26,10 +26,10 @@ if(!fs.existsSync(fileDir)) {
 
 var storage = multer.diskStorage({
     destination: function (request, file, cb) {
-        cb(null, fileDir)
+        cb(null, path.join(fileDir, request.query.dir));
     },
     filename: function (request, file, cb) {
-        cb(null, file.originalname)
+        cb(null, file.originalname);
     }
 });
 var upload = multer({storage: storage});

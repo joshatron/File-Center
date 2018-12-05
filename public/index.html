@@ -50,6 +50,12 @@
                     </tr>
                 </thead>
                 <tbody>
+                    <tr ng-show="currentDirectory.length > 0" ng-click="moveUpDir()">
+                        <td></td>
+                        <td>..</td>
+                        <td>{{joinDirectory()}}</td>
+                        <td></td>
+                    </tr>
                     <tr ng-repeat="file in displayedFiles">
                         <td class="fixedColumn">
                             <input title="{{file.name}}" type="checkbox" class="checkbox-lg"

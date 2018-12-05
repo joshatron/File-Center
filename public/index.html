@@ -59,7 +59,8 @@
                         <td ng-click="moveDir(file.name)" class="fixedColumn"><span ng-show="file.type === 'directory'" class="glyphicon glyphicon-folder-open"></span>{{file.name}}</td>
                         <td ng-click="moveDir(file.name)" class="fixedColumn"> {{printFileSize(file.size)}}</td>
                         <td class="fixedColumn">
-                            <form method="get" action="{{downloadCall(file.name)}}">
+                            <form method="get" action="api/download">
+                                <input type="hidden" name="file" value="{{downloadCall(file.name)}}" />
                                 <button type="submit"
                                         class="btn btn-default pull-right" aria-haspopup="true" aria-expanded="false">
                                     <span class="glyphicon glyphicon-download-alt"></span>

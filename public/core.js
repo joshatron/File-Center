@@ -9,6 +9,7 @@ fileCenter.controller('mainController', ['$scope', "$http", 'Upload', function (
     $scope.currentFiles = [];
     $scope.displayedFiles = [];
     $scope.filesToUpload = [];
+    $scope.currentDirectory = [];
 
     $http.get('api/banner').then(function (result) {
         $scope.message = result.data;
@@ -18,8 +19,6 @@ fileCenter.controller('mainController', ['$scope', "$http", 'Upload', function (
         $http.get('api/files').then(function (result) {
             $scope.files = result.data;
             $scope.currentFiles = result.data;
-            console.log("Successfully found files:");
-            console.log($scope.files);
         });
     };
     $scope.getFiles();
@@ -28,8 +27,19 @@ fileCenter.controller('mainController', ['$scope', "$http", 'Upload', function (
         $scope.uploadFiles($scope.filesToUpload);
     });
 
+    $scope.joinDirectory = function () {
+        if($scope.currentDirectory.length > 0)
+        {
+            return $scope.currentDirectory.reduce(function (accumulator, element) {
+                return accumulator + '/' + element;
+            }) + '/';
+        }
+        else {
+            return '';
+        }
+    };
+
     $scope.uploadFiles = function(toUpload) {
-        console.log(toUpload);
         var processed = 0;
         toUpload.forEach(function(file) {
             Upload.upload({
@@ -46,15 +56,8 @@ fileCenter.controller('mainController', ['$scope', "$http", 'Upload', function (
         });
     };
 
-    $scope.getFile = function(file) {
-        console.log("Downloading: " + file);
-        return $http.get('api/download/' + file, {responseType: 'blob'}).then(function (result) {
-            return result.data;
-        });
-    };
-
     $scope.downloadCall = function(file) {
-        return "api/download/" + file;
+        return $scope.joinDirectory() + file;
     };
 
     $scope.getToZip = function() {
@@ -87,8 +90,8 @@ fileCenter.controller('mainController', ['$scope', "$http", 'Upload', function (
         });
 
         if (found.type === 'directory') {
-            console.log('moving into ' + file);
             $scope.currentFiles = found.contents;
+            $scope.currentDirectory.push(found.name);
         }
     };
 

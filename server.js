@@ -125,15 +125,20 @@ app.post('/api/upload', upload.any(), function(request, response, next) {
     response.send("Upload successful");
 });
 
-app.get('/api/download/:name', function(request, response) {
-    fs.stat(path.join(fileDir, request.params.name), function (error, stats) {
-        if(stats.isDirectory()) {
-            getZipFiles([request.params.name], function(error, results) {
-                response.zip(results, request.params.name.split('/').pop() + '.zip');
-            });
+app.get('/api/download', function(request, response) {
+    fs.stat(path.join(fileDir, request.query.file), function (error, stats) {
+        if(stats === undefined) {
+            response.status(404).send('File ' + request.query.file + ' not found');
         }
         else {
-            response.download(path.join(fileDir, request.params.name));
+            if (stats.isDirectory()) {
+                getZipFiles([request.query.file], function (error, results) {
+                    response.zip(results, request.query.file.split('/').pop() + '.zip');
+                });
+            }
+            else {
+                response.download(path.join(fileDir, request.query.file));
+            }
         }
     });
 });

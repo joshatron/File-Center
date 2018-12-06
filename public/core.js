@@ -18,16 +18,7 @@ fileCenter.controller('mainController', ['$scope', "$http", 'Upload', function (
     $scope.getFiles = function() {
         $http.get('api/files').then(function (result) {
             $scope.files = result.data;
-            $scope.currentFiles = $scope.files;
-            $scope.currentDirectory = [];
-            /*if($scope.currentDirectory.length > 0) {
-                $scope.currentDirectory.forEach(function (folder) {
-                    var found = $scope.currentFiles.find(function (element) {
-                        return element.name === folder;
-                    });
-                    $scope.currentFiles = found.contents;
-                });
-            }*/
+            $scope.goToCurrentDir();
         });
     };
     $scope.getFiles();
@@ -74,13 +65,11 @@ fileCenter.controller('mainController', ['$scope', "$http", 'Upload', function (
     };
 
     $scope.getToZip = function() {
-        var toDownload = $scope.files.filter(function(result) {
+        return $scope.files.filter(function(result) {
             return $scope.selectedFiles[result.name];
         }).map(function(result) {
             return result.name;
         });
-
-        return toDownload;
     };
 
     $scope.isAllSelected = function () {
@@ -107,17 +96,23 @@ fileCenter.controller('mainController', ['$scope', "$http", 'Upload', function (
         }
     };
 
-    $scope.moveUpDir = function() {
-        $scope.currentDirectory.pop();
-        $scope.currentFiles = $scope.files;
+    $scope.goToCurrentDir = function() {
+        var current = $scope.files;
         if($scope.currentDirectory.length > 0) {
             $scope.currentDirectory.forEach(function (folder) {
-                var found = $scope.currentFiles.find(function (element) {
+                var found = current.find(function (element) {
                     return element.name === folder;
                 });
-                $scope.currentFiles = found.contents;
+                current = found.contents;
             });
         }
+
+        $scope.currentFiles = current;
+    };
+
+    $scope.moveUpDir = function() {
+        $scope.currentDirectory.pop();
+        $scope.goToCurrentDir();
     };
 
     $scope.printFileSize = function (size) {
@@ -137,4 +132,4 @@ fileCenter.controller('mainController', ['$scope', "$http", 'Upload', function (
             return size + " B";
         }
     }
-}])
+}]);

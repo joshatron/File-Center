@@ -10,6 +10,7 @@ fileCenter.controller('mainController', ['$scope', "$http", 'Upload', function (
     $scope.displayedFiles = [];
     $scope.filesToUpload = [];
     $scope.currentDirectory = [];
+    $scope.allSelected = false;
 
     $http.get('api/banner').then(function (result) {
         $scope.message = result.data;
@@ -25,6 +26,10 @@ fileCenter.controller('mainController', ['$scope', "$http", 'Upload', function (
 
     $scope.$watch('filesToUpload', function () {
         $scope.uploadFiles($scope.filesToUpload);
+    });
+
+    $scope.$watch('selectedFiles', function () {
+        $scope.isAllSelected();
     });
 
     $scope.joinDirectory = function () {
@@ -65,24 +70,26 @@ fileCenter.controller('mainController', ['$scope', "$http", 'Upload', function (
     };
 
     $scope.getToZip = function() {
-        return $scope.files.filter(function(result) {
-            return $scope.selectedFiles[result.name];
-        }).map(function(result) {
-            return result.name;
+        return Object.keys($scope.selectedFiles).filter(function(result) {
+            return $scope.selectedFiles[result];
         });
     };
 
     $scope.isAllSelected = function () {
-        return $scope.displayedFiles.every(function (result) {
-            return $scope.selectedFiles[result.name];
+        $scope.allSelected = $scope.displayedFiles.every(function (result) {
+            return $scope.selectedFiles[$scope.joinDirectory() + result.name];
         });
+
+        return $scope.allSelected;
     };
 
     $scope.selectAll = function () {
         var selectAll = !$scope.isAllSelected();
+        console.log(selectAll);
         $scope.displayedFiles.forEach(function (result) {
-            $scope.selectedFiles[result.name] = selectAll;
+            $scope.selectedFiles[$scope.joinDirectory() + result.name] = selectAll;
         });
+        $scope.allSelected = selectAll;
     };
 
     $scope.moveDir = function(file) {

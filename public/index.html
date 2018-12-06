@@ -34,7 +34,7 @@
                     </tr>
                     <tr>
                         <th class="fixedColumn col-xs-1">
-                            <input type="checkbox" class="checkbox-lg" ng-click="selectAll()" ng-checked="isAllSelected()" title="Select All">
+                            <input type="checkbox" class="checkbox-lg" ng-click="selectAll()" ng-model="allSelected" title="Select All">
                         </th>
                         <th st-sort="name" st-sort-default="true" class="fixedColumn col-xs-5 table-header">File</th>
                         <th st-sort="size" st-sort-default="false" class="fixedColumn col-xs-5 table-header">Size</th>
@@ -59,7 +59,7 @@
                     <tr ng-repeat="file in displayedFiles">
                         <td class="fixedColumn">
                             <input title="{{file.name}}" type="checkbox" class="checkbox-lg"
-                                ng-model="selectedFiles[file.name]"
+                                ng-model="selectedFiles[joinDirectory() + file.name]"
                                 style="vertical-align:middle" multi-check>
                         </td>
                         <td ng-click="moveDir(file.name)" class="fixedColumn"><span ng-show="file.type === 'directory'" class="glyphicon glyphicon-folder-open"></span>{{file.name}}</td>
@@ -88,7 +88,7 @@
                     </tr>
                     <tr>
                         <th class="fixedColumn col-xs-1">
-                            <input type="checkbox" class="checkbox-lg" ng-click="selectAll()" ng-checked="isAllSelected()" title="Select All">
+                            <input type="checkbox" class="checkbox-lg" ng-click="selectAll()" ng-model="allSelected" title="Select All">
                         </th>
                         <th st-sort="name" st-sort-default="true" class="fixedColumn col-xs-5 table-header">File</th>
                         <th class="col-xs-1">
@@ -111,7 +111,7 @@
                     <tr ng-repeat="file in displayedFiles">
                         <td class="fixedColumn">
                             <input title="{{file.name}}" type="checkbox" class="checkbox-lg"
-                                ng-model="selectedFiles[file.name]"
+                                ng-model="selectedFiles[joinDirectory() + file.name]"
                                 style="vertical-align:middle" multi-check>
                         </td>
                         <td ng-click="moveDir(file.name)" class="fixedColumn"><span ng-show="file.type === 'directory'" class="glyphicon glyphicon-folder-open"></span>{{file.name}}</td>

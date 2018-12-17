@@ -4,9 +4,9 @@ export class Model {
 
     constructor() {
         this.title = "Josh's File Center";
-        this.files = [new File("file1.txt", 1000, "file", false),
-                      new File("file2.txt", 2000, "file", false),
-                      new File("file3.txt", 1000, "file", false)];
+        this.files = [new File("file1.txt", 972, "file", false),
+                      new File("file2.txt", 2530, "file", false),
+                      new File("folder1", 1350000, "directory", false)];
                      
     }
 }

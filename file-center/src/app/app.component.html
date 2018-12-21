@@ -22,7 +22,7 @@
             <tr *ngFor="let file of getFiles()">
                 <td><input type="checkbox" [(ngModel)]="file.selected" /></td>
                 <td>
-                    <fa-icon [hidden]="file.type !== 'directory'" [icon]="faFolder"></fa-icon>
+                    <fa-icon *ngIf="file.type === 'directory'" [icon]="faFolder"></fa-icon>
                     {{file.name}}
                 </td>
                 <td>{{getPrettySize(file.size)}}</td>

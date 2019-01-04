@@ -1,8 +1,9 @@
-improt { NgModule } from "@angular/core";
+import { NgModule } from "@angular/core";
 import { FileRepository } from "./file.repository";
 import { StaticDataSource } from "./static.datasource";
 
-@NGModule({
-    providers: [FileRepository, StaticdataSource]
+@NgModule({
+    providers: [FileRepository, StaticDataSource]
 })
+
 export class ModelModule {}

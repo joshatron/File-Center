@@ -43,4 +43,17 @@ export class FileRepository {
     inBaseDir(): boolean {
         return this.currentDir.length == 0;
     }
+
+    toggleSelected() {
+        if(this.isAllSelected()) {
+            this.files.forEach(file => file.selected = false);
+        }
+        else {
+          this.files.forEach(file => file.selected = true);
+        }
+    }
+
+    isAllSelected(): boolean {
+        return this.files.every(file => file.selected);
+    }
 }

@@ -51,4 +51,12 @@ export class FilesComponent {
     getCurrentDir(): string {
         return this.repository.getCurrentDir().reduce((accumulator, current) => accumulator + "/" + current);
     }
+
+    toggleSelected() {
+        this.repository.toggleSelected();
+    }
+
+    isAllSelected(): boolean {
+        return this.repository.isAllSelected();
+    }
 }

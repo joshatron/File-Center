@@ -18,7 +18,19 @@ export class FilesComponent {
         return this.repository.getFiles();
     }
 
-    getPrettySize(size) {
+    changeDir(name: string) {
+        this.repository.moveDownDir(name);
+    }
+
+    moveUpDir() {
+        this.repository.moveUpDir();
+    }
+
+    inBaseDir(): boolean {
+        return this.repository.inBaseDir();
+    }
+
+    getPrettySize(size: number): string {
         if(size >= 1000000000000) {
             return (size / 1000000000000).toFixed(1) + ' TB';
         }
@@ -34,5 +46,9 @@ export class FilesComponent {
         else {
             return size + ' B';
         }
+    }
+
+    getCurrentDir(): string {
+        return this.repository.getCurrentDir().reduce((accumulator, current) => accumulator + "/" + current);
     }
 }

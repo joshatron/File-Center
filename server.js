@@ -53,7 +53,7 @@ var getFiles = function(dir, done) {
                         dirContents.forEach(function (f) {
                             sum += f.size;
                         });
-                        files.push({name: file, size: sum, type: 'directory', contents: dirContents});
+                        files.push({name: file, size: sum, type: 'directory', files: dirContents});
                         processed++;
 
                         if (processed === contents.length) {
@@ -62,7 +62,7 @@ var getFiles = function(dir, done) {
                     });
                 }
                 else {
-                    files.push({name: file, size: stats["size"], type: 'file'});
+                    files.push({name: file, size: stats["size"], type: 'file', files: []});
                     processed++;
 
                     if (processed === contents.length) {

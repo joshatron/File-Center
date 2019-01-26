@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { File } from "./file.model";
-import { StaticDataSource } from "./static.datasource";
+import { RestDataSource } from "./rest.datasource";
 
 @Injectable()
 export class FileRepository {
@@ -8,9 +8,8 @@ export class FileRepository {
     private files: File[] = [];
     private currentDir: string[] = [];
 
-    constructor(private dataSource: StaticDataSource) {
-        dataSource.getFiles().subscribe(data => this.baseFiles = data);
-        this.files = this.baseFiles;
+    constructor(private dataSource: RestDataSource) {
+        dataSource.getFiles().subscribe(data => {this.baseFiles = data; this.files = this.baseFiles;});
     }
 
     getFiles(): File[] {

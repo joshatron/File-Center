@@ -1,9 +1,11 @@
 import { NgModule } from "@angular/core";
 import { FileRepository } from "./file.repository";
-import { StaticDataSource } from "./static.datasource";
+import { HttpClientModule } from "@angular/common/http";
+import { RestDataSource } from "./rest.datasource";
 
 @NgModule({
-    providers: [FileRepository, StaticDataSource]
+    imports: [HttpClientModule],
+    providers: [FileRepository, RestDataSource]
 })
 
 export class ModelModule {}

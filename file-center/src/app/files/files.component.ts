@@ -1,7 +1,7 @@
 import { Component } from "@angular/core";
 import { File } from "../model/file.model";
 import { FileRepository } from "../model/file.repository";
-import { faDownload, faFolder } from '@fortawesome/free-solid-svg-icons';
+import { faDownload, faFolder, faCaretUp, faCaretDown } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: "files",
@@ -11,11 +11,38 @@ import { faDownload, faFolder } from '@fortawesome/free-solid-svg-icons';
 export class FilesComponent {
     faDownload = faDownload;
     faFolder = faFolder;
+    faCaretUp = faCaretUp;
+    faCaretDown = faCaretDown;
+    search: string = "";
+    fileSort: number = 1;
+    sizeSort: number = 0;
 
     constructor(private repository: FileRepository) {}
 
     get files(): File[] {
-        return this.repository.getFiles();
+        if(this.fileSort == 1) {
+            return this.repository.getFiles().filter(file => file.name.toLowerCase().includes(this.search.toLowerCase())).sort(function(a,b) {
+                if(a.name.toLowerCase() < b.name.toLowerCase()) {return -1;}
+                if(a.name.toLowerCase() > b.name.toLowerCase()) {return 1;}
+                return 0;
+            });
+        }
+        else if(this.fileSort == 2) {
+            return this.repository.getFiles().filter(file => file.name.toLowerCase().includes(this.search.toLowerCase())).sort(function(a,b) {
+                if(a.name.toLowerCase() > b.name.toLowerCase()) {return -1;}
+                if(a.name.toLowerCase() < b.name.toLowerCase()) {return 1;}
+                return 0;
+            });
+        }
+        else if(this.sizeSort == 1) {
+            return this.repository.getFiles().filter(file => file.name.toLowerCase().includes(this.search.toLowerCase())).sort((a,b) => a.size - b.size);
+        }
+        else if(this.sizeSort == 2) {
+            return this.repository.getFiles().filter(file => file.name.toLowerCase().includes(this.search.toLowerCase())).sort((a,b) => b.size - a.size);
+        }
+        else {
+            return this.repository.getFiles().filter(file => file.name.toLowerCase().includes(this.search.toLowerCase()));
+        }
     }
 
     changeDir(name: string) {
@@ -58,5 +85,19 @@ export class FilesComponent {
 
     isAllSelected(): boolean {
         return this.repository.isAllSelected();
+    }
+
+    updateSearch(event: any) {
+        this.search = event.target.value;
+    }
+
+    toggleFileSort() {
+        this.sizeSort = 0;
+        this.fileSort = (this.fileSort + 1) % 3;
+    }
+
+    toggleSizeSort() {
+        this.fileSort = 0;
+        this.sizeSort = (this.sizeSort + 1) % 3;
     }
 }

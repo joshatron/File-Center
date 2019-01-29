@@ -34,7 +34,9 @@ var storage = multer.diskStorage({
 });
 var upload = multer({storage: storage});
 
-app.use(express.static(path.join(__dirname,  'public')));
+app.use('/', express.static(path.join(__dirname,  'public')));
+//Uncomment this and delete other when new frontend ready
+//app.use('/', express.static(path.join(__dirname, 'file-center', 'dist', 'file-center')));
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({extended:'true', limit: '1tb'}));
 app.use(bodyParser.json({limit: '1tb'}));
@@ -147,10 +149,6 @@ app.post('/api/downloadzip', function(request, response) {
     getZipFiles(JSON.parse(request.body.files), function(error, results) {
         response.zip(results, 'file-center-download.zip');
     });
-});
-
-app.get('/', function(request, response) {
-    response.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 if(config.port === undefined) {

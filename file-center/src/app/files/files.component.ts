@@ -20,29 +20,30 @@ export class FilesComponent {
     constructor(private repository: FileRepository) {}
 
     get files(): File[] {
+        let toReturn = this.repository.getFiles().filter(file => file.name.toLowerCase().includes(this.search.toLowerCase()));
+
         if(this.fileSort == 1) {
-            return this.repository.getFiles().filter(file => file.name.toLowerCase().includes(this.search.toLowerCase())).sort(function(a,b) {
+            toReturn.sort(function(a,b) {
                 if(a.name.toLowerCase() < b.name.toLowerCase()) {return -1;}
                 if(a.name.toLowerCase() > b.name.toLowerCase()) {return 1;}
                 return 0;
             });
         }
         else if(this.fileSort == 2) {
-            return this.repository.getFiles().filter(file => file.name.toLowerCase().includes(this.search.toLowerCase())).sort(function(a,b) {
+            toReturn.sort(function(a,b) {
                 if(a.name.toLowerCase() > b.name.toLowerCase()) {return -1;}
                 if(a.name.toLowerCase() < b.name.toLowerCase()) {return 1;}
                 return 0;
             });
         }
         else if(this.sizeSort == 1) {
-            return this.repository.getFiles().filter(file => file.name.toLowerCase().includes(this.search.toLowerCase())).sort((a,b) => a.size - b.size);
+            toReturn.sort((a,b) => a.size - b.size);
         }
         else if(this.sizeSort == 2) {
-            return this.repository.getFiles().filter(file => file.name.toLowerCase().includes(this.search.toLowerCase())).sort((a,b) => b.size - a.size);
+            toReturn.sort((a,b) => b.size - a.size);
         }
-        else {
-            return this.repository.getFiles().filter(file => file.name.toLowerCase().includes(this.search.toLowerCase()));
-        }
+
+        return toReturn;
     }
 
     changeDir(name: string) {
@@ -93,11 +94,21 @@ export class FilesComponent {
 
     toggleFileSort() {
         this.sizeSort = 0;
-        this.fileSort = (this.fileSort + 1) % 3;
+        if(this.fileSort == 1) {
+            this.fileSort = 2;
+        }
+        else {
+            this.fileSort = 1;
+        }
     }
 
     toggleSizeSort() {
         this.fileSort = 0;
-        this.sizeSort = (this.sizeSort + 1) % 3;
+        if(this.sizeSort == 1) {
+            this.sizeSort = 2;
+        }
+        else {
+            this.sizeSort = 1;
+        }
     }
 }

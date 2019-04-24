@@ -12,11 +12,7 @@ export class FileRepository {
         dataSource.getFiles().subscribe(data => {this.baseFiles = data; this.files = this.baseFiles;});
     }
 
-    getFiles(): File[] {
-        return this.files;
-    }
-
-    getFiles(search: string): File[] {
+    getFiles(search: string = ""): File[] {
         return this.files.filter(file => file.name.toLowerCase().includes(search.toLowerCase()));
     }
 
@@ -47,16 +43,7 @@ export class FileRepository {
         return this.currentDir.length == 0;
     }
 
-    toggleSelected() {
-        if(this.isAllSelected()) {
-            this.getFiles().forEach(file => file.selected = false);
-        }
-        else {
-          this.getFiles().forEach(file => file.selected = true);
-        }
-    }
-
-    toggleSelected(search: string) {
+    toggleSelected(search: string = "") {
         if(this.isAllSelected(search)) {
             this.getFiles(search).forEach(file => file.selected = false);
         }
@@ -65,11 +52,7 @@ export class FileRepository {
         }
     }
 
-    isAllSelected(): boolean {
-        return this.getFiles().every(file => file.selected);
-    }
-
-    isAllSelected(search: string): boolean {
+    isAllSelected(search: string = ""): boolean {
         return this.getFiles(search).every(file => file.selected);
     }
 }

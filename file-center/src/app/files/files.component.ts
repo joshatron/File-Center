@@ -13,6 +13,7 @@ export class FilesComponent {
     faFolder = faFolder;
     faCaretUp = faCaretUp;
     faCaretDown = faCaretDown;
+    baseUrl: string = "http://localhost:8080";
     currentSearch: string = "";
     fileSort: number = 1;
     sizeSort: number = 0;
@@ -79,7 +80,12 @@ export class FilesComponent {
     }
 
     getCurrentDir(): string {
-        return this.repository.getCurrentDir().reduce((accumulator, current) => accumulator + "/" + current);
+        if(this.repository.getCurrentDir().length > 0) {
+            return this.repository.getCurrentDir().reduce((accumulator, current) => accumulator + "/" + current);
+        }
+        else {
+            return "";
+        }
     }
 
     toggleSelected() {
@@ -112,5 +118,9 @@ export class FilesComponent {
         else {
             this.sizeSort = 1;
         }
+    }
+
+    getFullFileName(file: string) {
+        return this.getCurrentDir() + "/" + file;
     }
 }

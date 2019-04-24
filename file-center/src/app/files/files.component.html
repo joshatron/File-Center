@@ -37,10 +37,12 @@
                 </td>
                 <td (click)="changeDir(file.name)">{{getPrettySize(file.size)}}</td>
                 <td>
-                    <button class="btn btn-outline-primary float-right">
-                        <fa-icon [icon]="faDownload"></fa-icon>
-                        Download
-                    </button>
+                    <a href="{{baseUrl}}/api/download?file={{getFullFileName(file.name)}}" download>
+                        <button type="submit" class="btn btn-outline-primary float-right">
+                            <fa-icon [icon]="faDownload"></fa-icon>
+                            Download
+                        </button>
+                    </a>
                 </td>
             </tr>
         </tbody>
@@ -87,9 +89,11 @@
                 </td>
                 <td (click)="changeDir(file.name)">{{getPrettySize(file.size)}}</td>
                 <td>
-                    <button class="btn btn-outline-primary float-right">
-                        <fa-icon [icon]="faDownload"></fa-icon>
-                    </button>
+                    <a href="{{baseUrl}}/api/download?file={{getFullFileName(file.name)}}" download>
+                        <button class="btn btn-outline-primary float-right">
+                            <fa-icon [icon]="faDownload"></fa-icon>
+                        </button>
+                    </a>
                 </td>
             </tr>
         </tbody>

@@ -16,6 +16,10 @@ export class FileRepository {
         return this.files;
     }
 
+    getFiles(search: string): File[] {
+        return this.files.filter(file => file.name.toLowerCase().includes(search.toLowerCase()));
+    }
+
     getCurrentDir(): string[] {
         return this.currentDir;
     }
@@ -45,14 +49,27 @@ export class FileRepository {
 
     toggleSelected() {
         if(this.isAllSelected()) {
-            this.files.forEach(file => file.selected = false);
+            this.getFiles().forEach(file => file.selected = false);
         }
         else {
-          this.files.forEach(file => file.selected = true);
+          this.getFiles().forEach(file => file.selected = true);
+        }
+    }
+
+    toggleSelected(search: string) {
+        if(this.isAllSelected(search)) {
+            this.getFiles(search).forEach(file => file.selected = false);
+        }
+        else {
+            this.getFiles(search).forEach(file => file.selected = true);
         }
     }
 
     isAllSelected(): boolean {
-        return this.files.every(file => file.selected);
+        return this.getFiles().every(file => file.selected);
+    }
+
+    isAllSelected(search: string): boolean {
+        return this.getFiles(search).every(file => file.selected);
     }
 }

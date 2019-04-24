@@ -13,14 +13,14 @@ export class FilesComponent {
     faFolder = faFolder;
     faCaretUp = faCaretUp;
     faCaretDown = faCaretDown;
-    search: string = "";
+    currentSearch: string = "";
     fileSort: number = 1;
     sizeSort: number = 0;
 
     constructor(private repository: FileRepository) {}
 
     get files(): File[] {
-        let toReturn = this.repository.getFiles().filter(file => file.name.toLowerCase().includes(this.search.toLowerCase()));
+        let toReturn = this.repository.getFiles(this.currentSearch);
 
         if(this.fileSort == 1) {
             toReturn.sort(function(a,b) {
@@ -48,10 +48,12 @@ export class FilesComponent {
 
     changeDir(name: string) {
         this.repository.moveDownDir(name);
+        this.currentSearch = "";
     }
 
     moveUpDir() {
         this.repository.moveUpDir();
+        this.currentSearch = "";
     }
 
     inBaseDir(): boolean {
@@ -81,15 +83,15 @@ export class FilesComponent {
     }
 
     toggleSelected() {
-        this.repository.toggleSelected();
+        this.repository.toggleSelected(this.currentSearch);
     }
 
     isAllSelected(): boolean {
-        return this.repository.isAllSelected();
+        return this.repository.isAllSelected(this.currentSearch);
     }
 
     updateSearch(event: any) {
-        this.search = event.target.value;
+        this.currentSearch = event.target.value;
     }
 
     toggleFileSort() {

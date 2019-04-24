@@ -1,5 +1,5 @@
 <div class="d-none d-md-block">
-    <input type="text" placeholder="Search files..." (keyup)="updateSearch($event)" class="form-control">
+    <input type="text" placeholder="Search files..." (keyup)="updateSearch($event)" [(ngModel)]="currentSearch" class="form-control">
     <table class="table table-striped table-sm">
         <thead>
             <tr>

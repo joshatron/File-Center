@@ -128,27 +128,28 @@ app.post('/api/upload', upload.any(), function(request, response, next) {
 });
 
 app.get('/api/download', function(request, response) {
-    fs.stat(path.join(fileDir, request.query.file), function (error, stats) {
-        if(stats === undefined) {
-            response.status(404).send('File ' + request.query.file + ' not found');
-        }
-        else {
-            if (stats.isDirectory()) {
-                getZipFiles([request.query.file], function (error, results) {
-                    response.zip(results, request.query.file.split('/').pop() + '.zip');
-                });
+    if(request.query.file !== undefined) {
+        fs.stat(path.join(fileDir, request.query.file), function (error, stats) {
+            if (stats === undefined) {
+                response.status(404).send('File ' + request.query.file + ' not found');
             }
             else {
-                response.download(path.join(fileDir, request.query.file));
+                if (stats.isDirectory()) {
+                    getZipFiles([request.query.file], function (error, results) {
+                        response.zip(results, request.query.file.split('/').pop() + '.zip');
+                    });
+                }
+                else {
+                    response.download(path.join(fileDir, request.query.file));
+                }
             }
-        }
-    });
-});
-
-app.get('/api/download-multiple', function(request, response) {
-    getZipFiles(JSON.parse(request.query.files), function(error, results) {
-        response.zip(results, 'file-center-download.zip');
-    });
+        });
+    }
+    else if(request.query.files !== undefined) {
+        getZipFiles(JSON.parse(request.query.files), function(error, results) {
+            response.zip(results, 'file-center-download.zip');
+        });
+    }
 });
 
 if(config.port === undefined) {

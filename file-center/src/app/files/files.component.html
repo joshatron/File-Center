@@ -15,7 +15,7 @@
                     Size
                 </th>
                 <th style="width: 30%">
-                    <a href="{{baseUrl}}/api/download-multiple?files={{getSelectedFiles()}}" download>
+                    <a href="{{baseUrl}}/api/download?files={{getSelectedFiles()}}" download>
                         <button class="btn btn-outline-primary float-right">
                             <fa-icon [icon]="faDownload"></fa-icon>
                             Download Selected
@@ -69,10 +69,12 @@
                     Size
                 </th>
                 <th style="width: 5%">
-                    <button class="btn btn-outline-primary float-right">
-                        <fa-icon [icon]="faDownload"></fa-icon>
-                        Selected
-                    </button>
+                    <a href="{{baseUrl}}/api/download?files={{getSelectedFiles()}}" download>
+                        <button class="btn btn-outline-primary float-right">
+                            <fa-icon [icon]="faDownload"></fa-icon>
+                            Selected
+                        </button>
+                    </a>
                 </th>
             </tr>
         </thead>

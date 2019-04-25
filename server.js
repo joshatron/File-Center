@@ -145,8 +145,8 @@ app.get('/api/download', function(request, response) {
     });
 });
 
-app.post('/api/downloadzip', function(request, response) {
-    getZipFiles(JSON.parse(request.body.files), function(error, results) {
+app.get('/api/download-multiple', function(request, response) {
+    getZipFiles(JSON.parse(request.query.files), function(error, results) {
         response.zip(results, 'file-center-download.zip');
     });
 });

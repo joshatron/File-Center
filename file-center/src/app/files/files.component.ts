@@ -120,7 +120,13 @@ export class FilesComponent {
         }
     }
 
-    getFullFileName(file: string) {
+    getFullFileName(file: string): string {
         return this.getCurrentDir() + "/" + file;
+    }
+
+    getSelectedFiles(): string {
+        return JSON.stringify(this.repository.getFiles(this.currentSearch)
+            .filter(file => file.selected == true)
+            .map(file => {return this.getCurrentDir() + "/" + file.name;}));
     }
 }

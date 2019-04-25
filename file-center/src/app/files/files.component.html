@@ -9,16 +9,18 @@
                     <fa-icon *ngIf="fileSort === 2" [icon]="faCaretDown"></fa-icon>
                     File
                 </th>
-                <th style="width: 35%" (click)="toggleSizeSort()">
+                <th style="width: 10%" (click)="toggleSizeSort()">
                     <fa-icon *ngIf="sizeSort === 1" [icon]="faCaretUp"></fa-icon>
                     <fa-icon *ngIf="sizeSort === 2" [icon]="faCaretDown"></fa-icon>
                     Size
                 </th>
-                <th style="width: 5%">
-                    <button class="btn btn-outline-primary float-right">
-                        <fa-icon [icon]="faDownload"></fa-icon>
-                        Download Selected
-                    </button>
+                <th style="width: 30%">
+                    <a href="{{baseUrl}}/api/download-multiple?files={{getSelectedFiles()}}" download>
+                        <button class="btn btn-outline-primary float-right">
+                            <fa-icon [icon]="faDownload"></fa-icon>
+                            Download Selected
+                        </button>
+                    </a>
                 </th>
             </tr>
         </thead>

@@ -11,6 +11,6 @@ export class AppComponent {
     banner: string = "";
 
     constructor(private http: HttpClient) {
-        this.http.get("http://localhost:8080/api/banner", {responseType: "text"}).subscribe(data => this.banner = data);
+        this.http.get("/api/banner", {responseType: "text"}).subscribe(data => this.banner = data);
     }
 }

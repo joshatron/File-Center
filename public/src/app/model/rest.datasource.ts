@@ -5,13 +5,10 @@ import { File } from "./file.model";
 
 @Injectable()
 export class RestDataSource {
-    baseUrl: string;
 
-    constructor(private http: HttpClient) {
-        this.baseUrl = `http://${location.hostname}:8080/api/`;
-    }
+    constructor(private http: HttpClient) {}
 
     getFiles(): Observable<File[]> {
-        return this.http.get<File[]>(this.baseUrl + "files");
+        return this.http.get<File[]>("/api/files");
     }
 }

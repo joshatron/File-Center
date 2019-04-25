@@ -34,7 +34,7 @@ var storage = multer.diskStorage({
 });
 var upload = multer({storage: storage});
 
-app.use('/', express.static(path.join(__dirname,  'public')));
+app.use('/', express.static(path.join(__dirname,  'public/dist/file-center')));
 //Uncomment this and delete other when new frontend ready
 //app.use('/', express.static(path.join(__dirname, 'file-center', 'dist', 'file-center')));
 app.use(morgan('dev'));

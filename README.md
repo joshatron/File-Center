@@ -15,10 +15,6 @@ To run the server, run the following command:
 
     npm start
     
-If you wish to have the server reload on code or config changes, run with the following command:
-
-    npm run start-watch
-    
 Config
 ------
 

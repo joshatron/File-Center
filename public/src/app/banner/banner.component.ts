@@ -2,11 +2,12 @@ import { Component } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 
 @Component({
-    selector: "file-center",
-    templateUrl: "./app.component.html"
+    selector: "banner",
+    templateUrl: "banner.component.html",
+    styleUrls: ["./banner.component.css"]
 })
-export class AppComponent {
-    title = "file-center";
+
+export class BannerComponent {
     banner: string = "";
 
     constructor(private http: HttpClient) {

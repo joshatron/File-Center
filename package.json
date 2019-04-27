@@ -8,7 +8,7 @@
   "license": "MIT",
   "scripts": {
     "start": "node server.js",
-    "postinstall": "cd public && npm install --no-optional && ng build"
+    "postinstall": "cd public && npm install && npm run-script ng build"
   },
   "dependencies": {
     "body-parser": "^1.18.3",

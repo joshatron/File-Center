@@ -1,22 +1,23 @@
 {
-    "name": "file-center",
-    "version": "1.2.0",
-    "description": "Simple file upload and download service",
-    "main": "server.js",
-    "author": "Joshatron",
-    "repository": "https://github.com/joshatron/File-Center",
-    "license": "MIT",
-    "scripts": {
-        "start": "node server.js",
-        "postinstall": "cd public && npm install && npm build"
-    },
-    "dependencies": {
-        "body-parser": "^1.18.3",
-        "express": "^4.16.4",
-        "express-zip": "^2.0.1",
-        "method-override": "^3.0.0",
-        "morgan": "^1.9.1",
-        "multer": "^1.4.1",
-        "nodemon": "^1.18.6"
-    }
+  "name": "file-center",
+  "version": "1.2.0",
+  "description": "Simple file upload and download service",
+  "main": "server.js",
+  "author": "Joshatron",
+  "repository": "https://github.com/joshatron/File-Center",
+  "license": "MIT",
+  "scripts": {
+    "start": "node server.js",
+    "postinstall": "cd public && npm install --no-optional && ng build"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "express-zip": "^2.0.1",
+    "ip": "^1.1.5",
+    "method-override": "^3.0.0",
+    "morgan": "^1.9.1",
+    "multer": "^1.4.1",
+    "nodemon": "^1.18.6"
+  }
 }

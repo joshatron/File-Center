@@ -6,6 +6,8 @@ The goal of this app is to create a minimal web server that allows people to upl
 Running
 -------
 
+To build and run this program, you need to npm and angular-cli installed.
+
 In order to get it set up, make sure you have npm installed and run the following commands:
 
     cd path/to/repo

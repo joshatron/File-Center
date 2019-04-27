@@ -9,6 +9,7 @@ var fs = require('fs');
 var multer = require('multer');
 var path = require('path');
 var zip = require('express-zip');
+var ip = require('ip');
 
 var config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config', 'config.json'), 'utf8'));
 if(config !== undefined) {
@@ -158,3 +159,4 @@ else {
     app.listen(config.port);
     console.log('App started on port ' + config.port);
 }
+console.log('IP address: ' + ip.address());

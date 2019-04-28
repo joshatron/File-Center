@@ -27,7 +27,7 @@ if(!fs.existsSync(fileDir)) {
 
 var storage = multer.diskStorage({
     destination: function (request, file, cb) {
-        //cb(null, path.join(fileDir, request.query.dir));
+        //TODO: do something here to upload to specific dir
         cb(null, fileDir);
     },
     filename: function (request, file, cb) {

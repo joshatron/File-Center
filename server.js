@@ -27,7 +27,8 @@ if(!fs.existsSync(fileDir)) {
 
 var storage = multer.diskStorage({
     destination: function (request, file, cb) {
-        cb(null, path.join(fileDir, request.query.dir));
+        //cb(null, path.join(fileDir, request.query.dir));
+        cb(null, fileDir);
     },
     filename: function (request, file, cb) {
         cb(null, file.originalname);

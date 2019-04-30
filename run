@@ -1,0 +1,7 @@
+#!/bin/bash
+
+set -e
+
+command -v npm >/dev/null 2>&1 || { echo >&2 "NPM is required for setup. Aborting."; exit 1; }
+
+npm start

@@ -13,7 +13,6 @@ export class FilesComponent {
     faFolder = faFolder;
     faCaretUp = faCaretUp;
     faCaretDown = faCaretDown;
-    baseUrl: string = "http://localhost:8080";
     currentSearch: string = "";
     fileSort: number = 1;
     sizeSort: number = 0;

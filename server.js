@@ -154,10 +154,10 @@ app.get('/api/download', function(request, response) {
 
 if(config.port === undefined) {
     app.listen(8080);
-    console.log('App started on port 8080');
+    console.log('App port: 8080');
 }
 else {
     app.listen(config.port);
-    console.log('App started on port ' + config.port);
+    console.log('App port: ' + config.port);
 }
 console.log('IP address: ' + ip.address());

@@ -1,4 +1,5 @@
 {
-    "port": 8080,
-    "banner": "File Center"
+    "port": 9000,
+    "banner": "File Center",
+    "uploads": true
 }

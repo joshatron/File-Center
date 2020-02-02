@@ -123,9 +123,16 @@ app.get('/api/banner', function (request, response) {
     }
 });
 
-app.post('/api/upload', upload.any(), function(request, response, next) {
-    response.send("Upload successful");
-});
+if(config.uploads === undefined || config.uploads === true) {
+    app.post('/api/upload', upload.any(), function(request, response, next) {
+        response.send("Upload successful");
+    });
+}
+else {
+    app.post('/api/upload', function(request, response) {
+        response.status(403).send("File uploading has been locked");
+    });
+}
 
 app.get('/api/download', function(request, response) {
     if(request.query.file !== undefined) {

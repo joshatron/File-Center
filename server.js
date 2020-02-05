@@ -12,32 +12,23 @@ var zip = require('express-zip');
 var ip = require('ip');
 
 var config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config', 'config.json'), 'utf8'));
-if(config === undefined) {
-    config = {};
+if(config !== undefined) {
+    console.log("Config: ");
+    console.log(config);
 }
-if(config.banner === undefined) {
-    config.banner = "File Center";
-}
-if(config.port === undefined) {
-    config.port = 8080;
-}
-if(config.dir === undefined) {
-    config.dir = path.join(__dirname, 'files');
-}
-if(config.uploads === undefined) {
-    config.uploads = true;
-}
-console.log("Config: ");
-console.log(config);
 
-if(!fs.existsSync(config.dir)) {
-    fs.mkdirSync(config.dir);
+var fileDir = path.join(__dirname, 'files');
+if(config.dir !== undefined) {
+    fileDir = config.dir;
+}
+if(!fs.existsSync(fileDir)) {
+    fs.mkdirSync(fileDir);
 }
 
 var storage = multer.diskStorage({
     destination: function (request, file, cb) {
         //TODO: do something here to upload to specific dir
-        cb(null, config.dir);
+        cb(null, fileDir);
     },
     filename: function (request, file, cb) {
         cb(null, file.originalname);
@@ -89,9 +80,9 @@ var getZipFiles = function(files, done) {
     var toZip = [];
     var processed = 0;
     files.forEach(function(file) {
-        fs.stat(path.join(config.dir, file), function(error, stats) {
+        fs.stat(path.join(fileDir, file), function(error, stats) {
             if(stats.isDirectory()) {
-                fs.readdir(path.join(config.dir, file), function(error, contents) {
+                fs.readdir(path.join(fileDir, file), function(error, contents) {
                     contents = contents.map(function(result) {
                         return path.join(file, result);
                     });
@@ -106,7 +97,7 @@ var getZipFiles = function(files, done) {
                 })
             }
             else {
-                toZip.push({path: path.join(config.dir, file), name: file});
+                toZip.push({path: path.join(fileDir, file), name: file});
                 processed++;
 
                 if (processed === files.length) {
@@ -118,20 +109,21 @@ var getZipFiles = function(files, done) {
 };
 
 app.get('/api/files', function(request, response) {
-    getFiles(config.dir, function(error, files) {
+    getFiles(fileDir, function(error, files) {
         response.json(files);
     });
 });
 
-app.get('/api/config', function(request, response) {
-    let uiConfig = {
-        banner: config.banner,
-        uploads: config.uploads
+app.get('/api/banner', function (request, response) {
+    if(config.banner === undefined) {
+        response.send("File Center");
     }
-    response.send(uiConfig);
+    else {
+        response.send(config.banner);
+    }
 });
 
-if(config.uploads === true) {
+if(config.uploads === undefined || config.uploads === true) {
     app.post('/api/upload', upload.any(), function(request, response, next) {
         response.send("Upload successful");
     });
@@ -144,7 +136,7 @@ else {
 
 app.get('/api/download', function(request, response) {
     if(request.query.file !== undefined) {
-        fs.stat(path.join(config.dir, request.query.file), function (error, stats) {
+        fs.stat(path.join(fileDir, request.query.file), function (error, stats) {
             if (stats === undefined) {
                 response.status(404).send('File ' + request.query.file + ' not found');
             }
@@ -155,7 +147,7 @@ app.get('/api/download', function(request, response) {
                     });
                 }
                 else {
-                    response.download(path.join(config.dir, request.query.file));
+                    response.download(path.join(fileDir, request.query.file));
                 }
             }
         });
@@ -167,6 +159,12 @@ app.get('/api/download', function(request, response) {
     }
 });
 
-app.listen(config.port);
-
-console.log('Local address: ' + ip.address() + ':' + config.port);
+if(config.port === undefined) {
+    app.listen(8080);
+    console.log('App port: 8080');
+}
+else {
+    app.listen(config.port);
+    console.log('App port: ' + config.port);
+}
+console.log('IP address: ' + ip.address());

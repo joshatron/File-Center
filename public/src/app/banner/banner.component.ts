@@ -1,5 +1,6 @@
 import { Component } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
+import { Config } from "../model/config.model";
+import { ConfigRepository } from "../model/config.repository";
 
 @Component({
     selector: "banner",
@@ -8,9 +9,9 @@ import { HttpClient } from "@angular/common/http";
 })
 
 export class BannerComponent {
-    banner: string = "";
+    constructor(private repository: ConfigRepository) {}
 
-    constructor(private http: HttpClient) {
-        this.http.get("/api/config", {responseType: "text"}).subscribe(data => this.banner = data);
+    get banner(): string {
+        return this.repository.getBanner();
     }
 }

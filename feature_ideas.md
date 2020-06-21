@@ -3,6 +3,10 @@ Feature Ideas
 
 Below are some ideas to implement:
 
+ * Fix folder uploading
+ * Fix uploading into folder
+ * Fix many file uploading
+ * Fix empty folder error
  * HTTPS
  * Download and view statistics
  * Password protection(after HTTPS)

@@ -11,22 +11,9 @@ var path = require('path');
 var zip = require('express-zip');
 var ip = require('ip');
 
-var config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config', 'config.json'), 'utf8'));
-if(config === undefined) {
-    config = {};
-}
-if(config.banner === undefined) {
-    config.banner = "File Center";
-}
-if(config.port === undefined) {
-    config.port = 8080;
-}
-if(config.dir === undefined) {
-    config.dir = path.join(__dirname, 'files');
-}
-if(config.uploads === undefined) {
-    config.uploads = true;
-}
+var configParse = require('./config')
+
+var config = configParse.getConfig(fs.readFileSync(path.join(__dirname, 'config', 'config.json'), 'utf8'));
 console.log("Config: ");
 console.log(config);
 
@@ -54,35 +41,39 @@ app.use(methodOverride());
 
 var getFiles = function(dir, done) {
     var files = [];
-    fs.readdir(dir, function(error, contents) {
-        var processed = 0;
-        contents.forEach(function (file) {
-            fs.stat(path.join(dir, file), function (error, stats) {
-                if(stats.isDirectory()) {
-                    getFiles(path.join(dir, file), function(error, dirContents) {
-                        var sum = 0;
-                        dirContents.forEach(function (f) {
-                            sum += f.size;
+    try {
+        fs.readdir(dir, function(error, contents) {
+            var processed = 0;
+            contents.forEach(function (file) {
+                fs.stat(path.join(dir, file), function (error, stats) {
+                    if(stats.isDirectory()) {
+                        getFiles(path.join(dir, file), function(error, dirContents) {
+                            var sum = 0;
+                            dirContents.forEach(function (f) {
+                                sum += f.size;
+                            });
+                            files.push({name: file, size: sum, type: 'directory', files: dirContents});
+                            processed++;
+
+                            if (processed === contents.length) {
+                                done(null, files);
+                            }
                         });
-                        files.push({name: file, size: sum, type: 'directory', files: dirContents});
+                    }
+                    else {
+                        files.push({name: file, size: stats["size"], type: 'file', files: []});
                         processed++;
 
                         if (processed === contents.length) {
                             done(null, files);
                         }
-                    });
-                }
-                else {
-                    files.push({name: file, size: stats["size"], type: 'file', files: []});
-                    processed++;
-
-                    if (processed === contents.length) {
-                        done(null, files);
                     }
-                }
+                });
             });
         });
-    });
+    } catch(error) {
+        done(null, files);
+    }
 };
 
 var getZipFiles = function(files, done) {

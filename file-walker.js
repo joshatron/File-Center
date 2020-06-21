@@ -1,42 +1,50 @@
 'use strict';
 
-var fs = require('fs');
+var fs = require('fs').promises;
+var path = require('path');
 
-function getFiles(dir) {
+async function getFiles(dir) {
     var files = [];
 
-    fs.readdir(dir, function(error, contents) {
-        contents.forEach(function (file) {
-            files.push(getFile(file));
-        });
-    });
+    let contents = await fs.readdir(dir, {withFileTypes: true});
+
+    for(let file of contents) {
+        let result = await getFile(dir, file);
+        files.push(result);
+    }
 
     return files;
 };
 
-function getFile(file) {
-    fs.stat(path.join(dir, file), function (error, stats) {
-        if(stats.isDirectory()) {
-            getFiles(path.join(dir, file), function(error, dirContents) {
-                var sum = 0;
-                dirContents.forEach(function (f) {
-                    sum += f.size;
-                });
-                files.push({name: file, size: sum, type: 'directory', files: dirContents});
-                processed++;
+async function getFile(dir, file) {
+    if(file.isDirectory()) {
+        let contents = await getFiles(path.join(dir, file.name));
 
-                if (processed === contents.length) {
-                    done(null, files);
-                }
-            });
-        }
-        else {
-            files.push({name: file, size: stats["size"], type: 'file', files: []});
-            processed++;
+        return {
+            name: file.name, 
+            size: getTotalSize(contents),
+            type: 'directory', 
+            files: contents
+        };
+    } else {
+        let stats = await fs.stat(path.join(dir, file.name));
 
-            if (processed === contents.length) {
-                done(null, files);
-            }
-        }
-    });
+        return {
+            name: file.name, 
+            size: stats["size"], 
+            type: 'file', 
+            files: []
+        };
+    }
 }
+
+function getTotalSize(files) {
+    let totalSize = 0;
+    for(let f of files) {
+        totalSize += f.size;
+    }
+
+    return totalSize;
+}
+
+exports.getFiles = getFiles;

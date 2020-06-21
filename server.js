@@ -12,6 +12,7 @@ var zip = require('express-zip');
 var ip = require('ip');
 
 var configParse = require('./config')
+var fileWalker = require('./file-walker')
 
 var config = configParse.getConfig(fs.readFileSync(path.join(__dirname, 'config', 'config.json'), 'utf8'));
 console.log("Config: ");
@@ -109,9 +110,10 @@ var getZipFiles = function(files, done) {
 };
 
 app.get('/api/files', function(request, response) {
-    getFiles(config.dir, function(error, files) {
-        response.json(files);
-    });
+    fileWalker.getFiles(config.dir).then(
+        function(value) {
+            response.json(value)
+        });
 });
 
 app.get('/api/config', function(request, response) {

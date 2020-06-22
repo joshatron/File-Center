@@ -25,6 +25,7 @@ if(!fs.existsSync(config.dir)) {
 var storage = multer.diskStorage({
     destination: function (request, file, cb) {
         //TODO: do something here to upload to specific dir
+        console.log(request);
         cb(null, config.dir);
     },
     filename: function (request, file, cb) {
@@ -39,43 +40,6 @@ app.use(bodyParser.urlencoded({extended:'true', limit: '1tb'}));
 app.use(bodyParser.json({limit: '1tb'}));
 app.use(bodyParser.json({type: 'application/vnd.api+json', limit: '1tb'}));
 app.use(methodOverride());
-
-var getFiles = function(dir, done) {
-    var files = [];
-    try {
-        fs.readdir(dir, function(error, contents) {
-            var processed = 0;
-            contents.forEach(function (file) {
-                fs.stat(path.join(dir, file), function (error, stats) {
-                    if(stats.isDirectory()) {
-                        getFiles(path.join(dir, file), function(error, dirContents) {
-                            var sum = 0;
-                            dirContents.forEach(function (f) {
-                                sum += f.size;
-                            });
-                            files.push({name: file, size: sum, type: 'directory', files: dirContents});
-                            processed++;
-
-                            if (processed === contents.length) {
-                                done(null, files);
-                            }
-                        });
-                    }
-                    else {
-                        files.push({name: file, size: stats["size"], type: 'file', files: []});
-                        processed++;
-
-                        if (processed === contents.length) {
-                            done(null, files);
-                        }
-                    }
-                });
-            });
-        });
-    } catch(error) {
-        done(null, files);
-    }
-};
 
 var getZipFiles = function(files, done) {
     var toZip = [];
@@ -124,40 +88,36 @@ app.get('/api/config', function(request, response) {
     response.send(uiConfig);
 });
 
-if(config.uploads === true) {
-    app.post('/api/upload', upload.any(), function(request, response, next) {
+app.post('/api/upload', upload.any(), function(request, response, next) {
+    if(config.uploads === true) {
         response.send("Upload successful");
-    });
-}
-else {
-    app.post('/api/upload', function(request, response) {
+    } else {
         response.status(403).send("File uploading has been locked");
-    });
-}
+    }
+});
 
 app.get('/api/download', function(request, response) {
-    if(request.query.file !== undefined) {
-        fs.stat(path.join(config.dir, request.query.file), function (error, stats) {
-            if (stats === undefined) {
-                response.status(404).send('File ' + request.query.file + ' not found');
+    fs.stat(path.join(config.dir, request.query.file), function (error, stats) {
+        if (stats === undefined) {
+            response.status(404).send('File ' + request.query.file + ' not found');
+        }
+        else {
+            if (stats.isDirectory()) {
+                getZipFiles([request.query.file], function (error, results) {
+                    response.zip(results, request.query.file.split('/').pop() + '.zip');
+                });
             }
             else {
-                if (stats.isDirectory()) {
-                    getZipFiles([request.query.file], function (error, results) {
-                        response.zip(results, request.query.file.split('/').pop() + '.zip');
-                    });
-                }
-                else {
-                    response.download(path.join(config.dir, request.query.file));
-                }
+                response.download(path.join(config.dir, request.query.file));
             }
-        });
-    }
-    else if(request.query.files !== undefined) {
-        getZipFiles(JSON.parse(request.query.files), function(error, results) {
-            response.zip(results, 'file-center-download.zip');
-        });
-    }
+        }
+    });
+});
+
+app.get('/api/downloadZip', function(request, response) {
+    getZipFiles(JSON.parse(request.query.files), function(error, results) {
+        response.zip(results, 'file-center-download.zip');
+    });
 });
 
 app.listen(config.port);

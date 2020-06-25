@@ -19,14 +19,14 @@ $(function() {
                 "width": "55%"
             },
             {
-                "orderable": true, 
+                "orderable": false, 
                 "searchable": false,
-                "width": "20%"
+                "width": "15%"
             },
             {
                 "orderable": false, 
                 "searchable": false,
-                "width": "20%"
+                "width": "25%"
             }
         ]
     });

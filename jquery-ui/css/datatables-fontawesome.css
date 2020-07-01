@@ -1,0 +1,51 @@
+/*!
+ * DataTables + Font Awesome integration
+ * License: MIT - http://datatables.net/license
+ */
+ 
+/*
+ * Sort styling
+ */
+.dataTable > thead > tr > th[class*="sort"]:before {
+    content: "" !important;
+}
+ 
+table.dataTable thead th.sorting:after,
+table.dataTable thead th.sorting_asc:after,
+table.dataTable thead th.sorting_desc:after {
+    position: absolute;
+    top: 12px;
+    right: 8px;
+    display: block;
+    font-family: "Font Awesome 5 Free";
+}
+
+.dataTable > thead > tr > th[class*="sorting_asc"]:after {
+  font-weight: 900; /* regular style/weight */
+  color: #000;
+  font-size: 1.0em;
+  padding-top: 0.9em;
+  padding-right: 32.5em;
+  content: "\f0de";
+}
+.dataTable > thead > tr > th[class*="sorting_desc"]:after {
+  font-weight: 900; /* regular style/weight */
+  color: #000;
+  font-size: 1.0em;
+  padding-top: 0.9em;
+  padding-right: 32.5em;
+  content: "\f0dd";
+}
+ 
+div.dataTables_scrollBody table.dataTable thead th.sorting:after,
+div.dataTables_scrollBody table.dataTable thead th.sorting_asc:after,
+div.dataTables_scrollBody table.dataTable thead th.sorting_desc:after {
+    content: "";
+}
+ 
+/* In Bootstrap and Foundation the padding top is a little different from the DataTables stylesheet */
+table.table thead th.sorting:after,
+table.table thead th.sorting_asc:after,
+table.table thead th.sorting_desc:after {
+    top: 8px;
+}

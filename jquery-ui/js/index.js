@@ -30,11 +30,18 @@ $(function() {
                 icon = '<i class="fas fa-folder" style="padding-right: 0.25rem;"></i>';
             }
             $('#files tbody').append(
-                '<tr>\n' +
-                    '<td><input type="checkbox"></td>\n' +
+                '<tr>' +
+                    '<td><input type="checkbox"></td>' +
                     '<td>' + icon + file.name + '</td>' + 
                     '<td>' + getPrettySize(file.size) + '</td>' +
-                    '<td><button class="btn btn-outline-primary float-right"><i class="fas fa-download"></i> Download</button></td>' +
+                    '<td>' +
+                        '<a href="/api/download?file=' + file.name + '" download>' +
+                            '<button class="btn btn-outline-primary float-right">' + 
+                                '<i class="fas fa-download"></i> ' +
+                                '<span class="d-none d-md-inline">Download</span>' +
+                            '</button>' +
+                        '</a>' +
+                    '</td>' +
                 '</tr>'
             )
         });
@@ -42,6 +49,7 @@ $(function() {
         $('#files').DataTable({
             "paging": false,
             "info": false,
+            "autoWidth": false,
             "order": [[ 1, "asc" ]],
             "columns": [
                 {
@@ -57,12 +65,12 @@ $(function() {
                 {
                     "orderable": false, 
                     "searchable": false,
-                    "width": "15%"
+                    "width": "20%"
                 },
                 {
                     "orderable": false, 
                     "searchable": false,
-                    "width": "25%"
+                    "width": "20%"
                 }
             ]
         });

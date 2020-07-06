@@ -31,7 +31,7 @@ $(function() {
             }
             $('#files tbody').append(
                 '<tr>' +
-                    '<td><input type="checkbox"></td>' +
+                    '<td><input type="checkbox" class="files-checkbox"></td>' +
                     '<td>' + icon + file.name + '</td>' + 
                     '<td>' + getPrettySize(file.size) + '</td>' +
                     '<td>' +

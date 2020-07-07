@@ -22,6 +22,10 @@ $(function() {
         $('#banner').text(config.banner);
     });
 
+    $('#head-checkbox').change(function() {
+        $('.file-checkbox').prop('checked', this.checked);
+    });
+
     //Insert table data
     $.get("/api/files", function(files) {
         files.forEach(file => {
@@ -31,7 +35,7 @@ $(function() {
             }
             $('#files tbody').append(
                 '<tr>' +
-                    '<td><input type="checkbox" class="files-checkbox"></td>' +
+                    '<td><input type="checkbox" class="file-checkbox"></td>' +
                     '<td>' + icon + file.name + '</td>' + 
                     '<td>' + getPrettySize(file.size) + '</td>' +
                     '<td>' +

@@ -22,6 +22,7 @@ $(function() {
         $('#banner').text(config.banner);
     });
 
+    $('#head-checkbox').prop('checked', false);
     $('#head-checkbox').change(function() {
         $('.file-checkbox').prop('checked', this.checked);
     });
@@ -48,6 +49,15 @@ $(function() {
                     '</td>' +
                 '</tr>'
             )
+        });
+
+        $('.file-checkbox').change(function() {
+            $('#head-checkbox').prop('checked', true);
+            $('.file-checkbox').each(function() {
+                if(!this.checked) {
+                    $('#head-checkbox').prop('checked', false);
+                }
+            });
         });
 
         $('#files').DataTable({

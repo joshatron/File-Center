@@ -27,6 +27,10 @@ $(function() {
         $('.file-checkbox').prop('checked', this.checked);
     });
 
+    $('#download-files').click(function() {
+        window.open('/api/downloadZip?files=["9780134494272.epub"]', '_blank');
+    });
+
     //Insert table data
     $.get("/api/files", function(files) {
         files.forEach(file => {

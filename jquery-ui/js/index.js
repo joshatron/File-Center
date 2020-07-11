@@ -28,7 +28,13 @@ $(function() {
     });
 
     $('#download-files').click(function() {
-        window.open('/api/downloadZip?files=["9780134494272.epub"]', '_blank');
+        let toDownload = new Array();
+        $('.file-checkbox').each(function() {
+            if(this.checked) {
+                toDownload.push($(this).val());
+            }
+        });
+        window.open('/api/downloadZip?files=' + JSON.stringify(toDownload), '_blank');
     });
 
     //Insert table data
@@ -40,7 +46,7 @@ $(function() {
             }
             $('#files tbody').append(
                 '<tr>' +
-                    '<td><input type="checkbox" class="file-checkbox"></td>' +
+                    '<td><input type="checkbox" class="file-checkbox" value="' + file.name + '"></td>' +
                     '<td>' + icon + file.name + '</td>' + 
                     '<td>' + getPrettySize(file.size) + '</td>' +
                     '<td>' +

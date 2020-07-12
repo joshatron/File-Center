@@ -17,28 +17,10 @@ function getPrettySize(size) {
 }
 
 $(function() {
-    // Insert Banner
-    $.get("/api/config", function(config) {
-        $('#banner').text(config.banner);
-    });
+    let path = "";
+    let allFiles = [];
 
-    $('#head-checkbox').prop('checked', false);
-    $('#head-checkbox').change(function() {
-        $('.file-checkbox').prop('checked', this.checked);
-    });
-
-    $('#download-files').click(function() {
-        let toDownload = new Array();
-        $('.file-checkbox').each(function() {
-            if(this.checked) {
-                toDownload.push($(this).val());
-            }
-        });
-        window.open('/api/downloadZip?files=' + JSON.stringify(toDownload), '_blank');
-    });
-
-    //Insert table data
-    $.get("/api/files", function(files) {
+    function viewFiles(files) {
         files.forEach(file => {
             let icon = '';
             if(file.type === 'directory') {
@@ -98,5 +80,31 @@ $(function() {
                 }
             ]
         });
+    }
+
+    // Insert Banner
+    $.get("/api/config", function(config) {
+        $('#banner').text(config.banner);
+    });
+
+    $('#head-checkbox').prop('checked', false);
+    $('#head-checkbox').change(function() {
+        $('.file-checkbox').prop('checked', this.checked);
+    });
+
+    $('#download-files').click(function() {
+        let toDownload = new Array();
+        $('.file-checkbox').each(function() {
+            if(this.checked) {
+                toDownload.push($(this).val());
+            }
+        });
+        window.open('/api/downloadZip?files=' + JSON.stringify(toDownload), '_blank');
+    });
+
+    //Insert table data
+    $.get("/api/files", function(files) {
+        allFiles = files;
+        viewFiles(allFiles);
     });
 });

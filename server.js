@@ -14,9 +14,23 @@ var ip = require('ip');
 var configParse = require('./config')
 var fileWalker = require('./file-walker')
 
-var config = configParse.getConfig(fs.readFileSync(path.join(__dirname, 'config', 'config.json'), 'utf8'));
+var configFile = path.join(__dirname, 'config', 'config.json');
+var config = configParse.getConfig(fs.readFileSync(configFile, 'utf8'));
 console.log("Config: ");
 console.log(config);
+var fsWait = false;
+fs.watch(configFile, (event, filename) => {
+    if (filename) {
+        if (fsWait) return;
+        fsWait = setTimeout(() => {
+            fsWait = false;
+        }, 100);
+
+        config = configParse.getConfig(fs.readFileSync(configFile, 'utf8'));
+        console.log("Config changed. New config: ");
+        console.log(config);
+    }
+});
 
 if(!fs.existsSync(config.dir)) {
     fs.mkdirSync(config.dir);

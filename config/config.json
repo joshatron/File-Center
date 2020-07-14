@@ -1,5 +1,5 @@
 {
     "port": 9000,
-    "banner": "The File Center",
+    "banner": "File Center",
     "uploads": true
 }

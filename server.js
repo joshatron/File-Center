@@ -34,11 +34,10 @@ var storage = multer.diskStorage({
 });
 var upload = multer({storage: storage});
 
-//app.use('/', express.static(path.join(__dirname, 'public', 'dist', 'file-center')));
-app.use('/public', express.static(path.join(__dirname, 'jquery-ui', 'public')));
-app.use('/', express.static(path.join(__dirname, 'jquery-ui', 'html')));
-app.use('/files', express.static(path.join(__dirname, 'jquery-ui', 'html')));
-app.use('/files/*', express.static(path.join(__dirname, 'jquery-ui', 'html')));
+app.use('/public', express.static(path.join(__dirname, 'public', 'static')));
+app.use('/', express.static(path.join(__dirname, 'public', 'html')));
+app.use('/files', express.static(path.join(__dirname, 'public', 'html')));
+app.use('/files/*', express.static(path.join(__dirname, 'public', 'html')));
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({extended:'true', limit: '1tb'}));
 app.use(bodyParser.json({limit: '1tb'}));

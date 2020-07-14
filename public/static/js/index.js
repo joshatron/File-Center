@@ -16,16 +16,28 @@ function getPrettySize(size) {
     }
 }
 
+Dropzone.autoDiscover = false;
+
 
 $(function() {
+    let table = null;
+
     $.get("/api/config", function(config) {
         //Insert Banner
         $('#banner').text(config.banner);
         //Show upload if allowed
-        if(!config.uploads) {
-            $('#upload').hide();
+        if(config.uploads) {
+            $('#dropzone').addClass("dropzone");
+            var myDropzone = new Dropzone("#dropzone", { 
+                url: "/api/upload",
+                maxFilesize: 1000000,
+                init: function(){
+                    this.on('queuecomplete', function() {getFiles();});
+                }
+            });
         }
     });
+
 
     //Setup table headers
     $('#head-checkbox').prop('checked', false);
@@ -42,7 +54,6 @@ $(function() {
         });
         window.open('/api/downloadZip?files=' + JSON.stringify(toDownload), '_blank');
     });
-
 
     getFiles();
 
@@ -65,6 +76,9 @@ $(function() {
                 }
             });
 
+            if(table !== null) {
+                table.destroy();
+            }
             $('#files tbody').empty();
 
             if(path !== "") {
@@ -123,7 +137,7 @@ $(function() {
                 });
             });
 
-            $('#files').DataTable({
+            table = $('#files').DataTable({
                 "paging": false,
                 "info": false,
                 "autoWidth": false,

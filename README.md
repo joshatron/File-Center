@@ -23,8 +23,12 @@ Config
 You can change the behaviour of the server by editting the config.json file in the config folder.
 The fields you can manage are as follows:
 
-| Field          | Description                                                                                                                   |
-|----------------|-------------------------------------------------------------------------------------------------------------------------------|
-| port           | Port to run the server on. By default the server runs on port 8080                                                            |
-| banner         | What text to display on the top banner of the page. By default the server displays "File Center"                              |
-| dir            | The absolute directory of the files. By default the server creates a directory called files inside the repo directory         |
+| Field          | Description                                                                                      |
+|----------------|--------------------------------------------------------------------------------------------------|
+| port           | Port to run the server on. Default is 8080                                                       |
+| banner         | What text to display on the top banner of the page. Default is "File Center".                    |
+| dir            | The directory of the files. Default is "./files".                                                | 
+| uploads        | Whether users can upload files or not. Default is true.                                          | 
+| https          | Whether the server is served with https or not. The default is false.                            | 
+| httpsCert      | If https is true, this specifies the location of the cert file. Default is "./config/cert.pem".  | 
+| httpsKey       | If https is true, this specifies the location of the key file. Default is "./config/key.pem".    | 

@@ -40,6 +40,8 @@ testem.log
 /typings
 *.swp
 /files/
+*.pem
+/config/config.json
 
 # System Files
 .DS_Store

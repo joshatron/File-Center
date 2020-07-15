@@ -1,5 +1,6 @@
 'use strict';
 
+var https = require('https');
 var express = require('express');
 var app = express();
 var morgan = require('morgan');
@@ -144,10 +145,19 @@ app.get('/api/download', function(request, response) {
 
 app.get('/api/downloadZip', function(request, response) {
     getZipFiles(JSON.parse(request.query.files), function(error, results) {
-        response.zip(results, 'file-center-download.zip');
+        response.zip(results, config.banner.replace(/ /gi, '-') + '.zip');
     });
 });
 
-app.listen(config.port);
+if(config.https) {
+    let credentials = {
+        cert: fs.readFileSync(config.httpsCert, 'utf8'),
+        key: fs.readFileSync(config.httpsKey, 'utf8'),
+    };
+    https.createServer(credentials, app).listen(config.port);
+} else {
+    app.listen(config.port);
+}
+
 
 console.log('Local address: ' + ip.address() + ':' + config.port);

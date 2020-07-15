@@ -18,6 +18,17 @@ var addDefaults = function(config) {
     if(config.uploads === undefined) {
         config.uploads = true;
     }
+    if(config.https === undefined) {
+        config.https = false;
+    }
+    if(config.https) {
+        if(config.httpsCert === undefined) {
+            config.httpsCert = path.join(__dirname, 'config', 'cert.pem');
+        }
+        if(config.httpsKey === undefined) {
+            config.httpsKey = path.join(__dirname, 'config', 'key.pem');
+        }
+    }
 
     return config;
 }

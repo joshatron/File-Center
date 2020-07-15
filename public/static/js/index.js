@@ -20,6 +20,13 @@ Dropzone.autoDiscover = false;
 
 
 $(function() {
+    let path = window.location.pathname;
+    if(path === "/") {
+        path = "";
+    } else {
+        path = path.substring(7);
+    }
+
     let table = null;
 
     $.get("/api/config", function(config) {
@@ -28,11 +35,16 @@ $(function() {
         //Show upload if allowed
         if(config.uploads) {
             $('#dropzone').addClass("dropzone");
+            let url = "/api/upload";
+            if(path !== "") {
+                url = url + "/" + path;
+            }
             var myDropzone = new Dropzone("#dropzone", { 
-                url: "/api/upload",
+                url: url,
                 maxFilesize: 1000000,
                 init: function(){
                     this.on('queuecomplete', function() {getFiles();});
+                    this.on("complete", function(file) {this.removeFile(file);});
                 }
             });
         }
@@ -60,13 +72,6 @@ $(function() {
     //Insert table data
     function getFiles() {
         $.get("/api/files", function(files) {
-            let path = window.location.pathname;
-            if(path === "/") {
-                path = "";
-            } else {
-                path = path.substring(7);
-            }
-
             path.split("/").forEach(function(folder) {
                 for(file of files) {
                     if(file.name === folder) {

@@ -38,9 +38,11 @@ if(!fs.existsSync(config.dir)) {
 
 var storage = multer.diskStorage({
     destination: function (request, file, cb) {
-        //TODO: do something here to upload to specific dir
-        console.log(request);
-        cb(null, config.dir);
+        let folder = config.dir;
+        if(request.url.length > 12) {
+            folder = path.join(folder, request.url.substring(12));
+        }
+        cb(null, folder);
     },
     filename: function (request, file, cb) {
         cb(null, file.originalname);
@@ -112,6 +114,15 @@ app.post('/api/upload', upload.any(), function(request, response, next) {
         response.status(403).send("File uploading has been locked");
     }
 });
+
+app.post('/api/upload/*', upload.any(), function(request, response, next) {
+    if(config.uploads === true) {
+        response.send("Upload successful");
+    } else {
+        response.status(403).send("File uploading has been locked");
+    }
+});
+
 
 app.get('/api/download', function(request, response) {
     fs.stat(path.join(config.dir, request.query.file), function (error, stats) {

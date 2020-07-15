@@ -43,8 +43,10 @@ $(function() {
                 url: url,
                 maxFilesize: 1000000,
                 init: function(){
-                    this.on('queuecomplete', function() {getFiles();});
-                    this.on("complete", function(file) {this.removeFile(file);});
+                    this.on("complete", function(file) {
+                        this.removeFile(file);
+                        getFiles();
+                    });
                 }
             });
         }

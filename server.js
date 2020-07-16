@@ -12,9 +12,10 @@ var path = require('path');
 var zip = require('express-zip');
 var ip = require('ip');
 
-var configParse = require('./config');
-var fileWalker = require('./file-walker');
-var authentication = require('./authentication');
+var configParse = require('./server/config');
+var fileWalker = require('./server/file-walker');
+var authentication = require('./server/authentication');
+var stats = require('./server/stats');
 
 var configFile = path.join(__dirname, 'config', 'config.json');
 var config = configParse.getConfig(fs.readFileSync(configFile, 'utf8'));
@@ -52,6 +53,8 @@ var storage = multer.diskStorage({
 });
 var upload = multer({storage: storage});
 
+stats.initialize(config);
+
 app.use("/api/*", function (request, response, next) {
     if(authentication.checkAuthentication(request, config)) {
         next();
@@ -74,8 +77,9 @@ var getZipFiles = function(files, done) {
     var toZip = [];
     var processed = 0;
     files.forEach(function(file) {
-        fs.stat(path.join(config.dir, file), function(error, stats) {
-            if(stats.isDirectory()) {
+        fs.stat(path.join(config.dir, file), function(error, fileStats) {
+            if(fileStats.isDirectory()) {
+                stats.addDownload(file + '/');
                 fs.readdir(path.join(config.dir, file), function(error, contents) {
                     contents = contents.map(function(result) {
                         return path.join(file, result);
@@ -91,6 +95,7 @@ var getZipFiles = function(files, done) {
                 })
             }
             else {
+                stats.addDownload(file);
                 toZip.push({path: path.join(config.dir, file), name: file});
                 processed++;
 
@@ -110,6 +115,7 @@ app.get('/api/files', function(request, response) {
 });
 
 app.get('/api/config', function(request, response) {
+    stats.addPageView(config);
     let uiConfig = {
         banner: config.banner,
         uploads: config.uploads
@@ -133,19 +139,20 @@ app.post('/api/upload/*', upload.any(), function(request, response, next) {
     }
 });
 
-
 app.get('/api/download', function(request, response) {
-    fs.stat(path.join(config.dir, request.query.file), function (error, stats) {
-        if (stats === undefined) {
+    fs.stat(path.join(config.dir, request.query.file), function (error, fileStats) {
+        if (fileStats === undefined) {
             response.status(404).send('File ' + request.query.file + ' not found');
         }
         else {
-            if (stats.isDirectory()) {
+            if (fileStats.isDirectory()) {
+                stats.addDownload(request.query.file + '/');
                 getZipFiles([request.query.file], function (error, results) {
                     response.zip(results, request.query.file.split('/').pop() + '.zip');
                 });
             }
             else {
+                stats.addDownload(request.query.file);
                 response.download(path.join(config.dir, request.query.file));
             }
         }

@@ -41,7 +41,7 @@ testem.log
 *.swp
 /files/
 *.pem
-/config/config.json
+/config/
 
 # System Files
 .DS_Store

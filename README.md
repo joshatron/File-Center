@@ -32,3 +32,4 @@ The fields you can manage are as follows:
 | https          | Whether the server is served with https or not. The default is false.                            | 
 | httpsCert      | If https is true, this specifies the location of the cert file. Default is "./config/cert.pem".  | 
 | httpsKey       | If https is true, this specifies the location of the key file. Default is "./config/key.pem".    | 
+| statsFile      | Location of stats file. Default is "./config/stats.json".                                        | 

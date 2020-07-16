@@ -63,7 +63,7 @@ $(function() {
         let toDownload = new Array();
         $('.file-checkbox').each(function() {
             if(this.checked) {
-                toDownload.push($(this).val());
+                toDownload.push(path + $(this).val());
             }
         });
         window.open('/api/downloadZip?files=' + JSON.stringify(toDownload), '_blank');
@@ -119,7 +119,7 @@ $(function() {
                 row = row + file.name + '</td>' + 
                     '<td>' + getPrettySize(file.size) + '</td>' +
                     '<td>' +
-                        '<a href="/api/download?file=' + file.name + '" download>' +
+                        '<a href="/api/download?file=' + path + file.name + '" download>' +
                             '<button class="btn btn-outline-primary float-right">' + 
                                 '<i class="fas fa-download"></i> ' +
                                 '<span class="d-none d-md-inline">Download</span>' +

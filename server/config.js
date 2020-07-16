@@ -13,7 +13,7 @@ var addDefaults = function(config) {
         config.port = 8080;
     }
     if(config.dir === undefined) {
-        config.dir = path.join(__dirname, 'files');
+        config.dir = path.join(__dirname, '..', 'files');
     }
     if(config.uploads === undefined) {
         config.uploads = true;
@@ -23,11 +23,14 @@ var addDefaults = function(config) {
     }
     if(config.https) {
         if(config.httpsCert === undefined) {
-            config.httpsCert = path.join(__dirname, 'config', 'cert.pem');
+            config.httpsCert = path.join(__dirname, '..', 'config', 'cert.pem');
         }
         if(config.httpsKey === undefined) {
-            config.httpsKey = path.join(__dirname, 'config', 'key.pem');
+            config.httpsKey = path.join(__dirname, '..', 'config', 'key.pem');
         }
+    }
+    if(config.statsFile === undefined) {
+        config.statsFile = path.join(__dirname, '..', 'config', 'stats.json');
     }
 
     return config;

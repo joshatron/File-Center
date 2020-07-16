@@ -12,8 +12,9 @@ var path = require('path');
 var zip = require('express-zip');
 var ip = require('ip');
 
-var configParse = require('./config')
-var fileWalker = require('./file-walker')
+var configParse = require('./config');
+var fileWalker = require('./file-walker');
+var authentication = require('./authentication');
 
 var configFile = path.join(__dirname, 'config', 'config.json');
 var config = configParse.getConfig(fs.readFileSync(configFile, 'utf8'));
@@ -50,6 +51,14 @@ var storage = multer.diskStorage({
     }
 });
 var upload = multer({storage: storage});
+
+app.use("/api/*", function (request, response, next) {
+    if(authentication.checkAuthentication(request, config)) {
+        next();
+    } else {
+        response.status(401).send("You are unauthorized.");
+    }
+});
 
 app.use('/public', express.static(path.join(__dirname, 'public', 'static')));
 app.use('/', express.static(path.join(__dirname, 'public', 'html')));

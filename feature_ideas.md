@@ -3,7 +3,6 @@ Feature Ideas
 
 Below are some ideas to implement:
 
- * HTTPS
  * Download and view statistics
  * Password protection(after HTTPS)
  * Password protection per folder

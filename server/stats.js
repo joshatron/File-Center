@@ -5,8 +5,8 @@ var fs = require('fs');
 var currentStats;
 var statsFile;
 
-exports.initialize = function(config) {
-    statsFile = config.statsFile;
+exports.initialize = function(file) {
+    this.updateStatsFile(file);
     try {
         currentStats = JSON.parse(fs.readFileSync(statsFile, 'utf8'));
     } catch (err) {
@@ -46,6 +46,10 @@ exports.addDownload = function(fileName) {
     }
 
     saveStats();
+}
+
+exports.updateStatsFile = function(newStatsFile) {
+    statsFile = newStatsFile;
 }
 
 function saveStats() {

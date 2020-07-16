@@ -30,6 +30,8 @@ fs.watch(configFile, (event, filename) => {
         }, 100);
 
         config = configParse.getConfig(fs.readFileSync(configFile, 'utf8'));
+        stats.updateStatsFile(config.statsFile);
+        authentication.updateWebAccessPassword(config.webPassword);
         console.log("Config changed. New config: ");
         console.log(config);
     }
@@ -53,10 +55,11 @@ var storage = multer.diskStorage({
 });
 var upload = multer({storage: storage});
 
-stats.initialize(config);
+stats.initialize(config.statsFile);
 
+authentication.initialize(config.webAccessPassword);
 app.use("/api/*", function (request, response, next) {
-    if(authentication.checkAuthentication(request, config)) {
+    if(authentication.checkToken(request, config)) {
         next();
     } else {
         response.status(401).send("You are unauthorized.");

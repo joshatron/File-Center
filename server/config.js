@@ -32,6 +32,9 @@ var addDefaults = function(config) {
     if(config.statsFile === undefined) {
         config.statsFile = path.join(__dirname, '..', 'config', 'stats.json');
     }
+    if(config.webPassword === undefined) {
+        config.webPassword = "";
+    }
 
     return config;
 }

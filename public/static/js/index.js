@@ -29,30 +29,6 @@ $(function() {
 
     let table = null;
 
-    $.get("/api/config", function(config) {
-        //Insert Banner
-        $('#banner').text(config.banner);
-        //Show upload if allowed
-        if(config.uploads) {
-            $('#dropzone').addClass("dropzone");
-            let url = "/api/upload";
-            if(path !== "") {
-                url = url + "/" + path;
-            }
-            var myDropzone = new Dropzone("#dropzone", { 
-                url: url,
-                maxFilesize: 1000000,
-                init: function(){
-                    this.on("complete", function(file) {
-                        this.removeFile(file);
-                        getFiles();
-                    });
-                }
-            });
-        }
-    });
-
-
     //Setup table headers
     $('#head-checkbox').prop('checked', false);
     $('#head-checkbox').change(function() {
@@ -69,7 +45,55 @@ $(function() {
         window.open('/api/downloadZip?files=' + JSON.stringify(toDownload), '_blank');
     });
 
-    getFiles();
+    //Check if need authentication
+    $.ajax({
+        url: '/api/config',
+        type: 'GET',
+        success: function(response){
+            applyConfig();
+            getFiles();
+        },
+        error: function() {
+            $.ajax({
+                url: '/authenticate',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({password: "password"}),
+                success: function(response){
+                    applyConfig();
+                    getFiles();
+                },
+                error: function(xhr, status, error) {
+                    console.log(error);
+                }
+            });
+        }
+    });
+
+    function applyConfig() {
+        $.get("/api/config", function(config) {
+            //Insert Banner
+            $('#banner').text(config.banner);
+            //Show upload if allowed
+            if(config.uploads) {
+                $('#dropzone').addClass("dropzone");
+                let url = "/api/upload";
+                if(path !== "") {
+                    url = url + "/" + path;
+                }
+                var myDropzone = new Dropzone("#dropzone", { 
+                    url: url,
+                    maxFilesize: 1000000,
+                    init: function(){
+                        this.on("complete", function(file) {
+                            this.removeFile(file);
+                            getFiles();
+                        });
+                    }
+                });
+            }
+        });
+    }
 
     //Insert table data
     function getFiles() {

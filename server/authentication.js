@@ -22,7 +22,7 @@ exports.checkToken = function(request, config) {
         return true;
     }
 
-    return true;
+    return request.cookies['auth'] === webAccessToken;
 }
 
 exports.updateWebAccessPassword = function(webAccessPass) {

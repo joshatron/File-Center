@@ -2,6 +2,8 @@
 
 var https = require('https');
 var express = require('express');
+var cookieParser = require('cookie-parser');
+var bodyParser = require('body-parser')
 var app = express();
 var morgan = require('morgan');
 var bodyParser = require('body-parser');
@@ -57,12 +59,25 @@ var upload = multer({storage: storage});
 
 stats.initialize(config.statsFile);
 
-authentication.initialize(config.webAccessPassword);
+app.use(cookieParser());
+app.use(bodyParser.json())
+
+authentication.initialize(config.webPassword);
 app.use("/api/*", function (request, response, next) {
     if(authentication.checkToken(request, config)) {
         next();
     } else {
         response.status(401).send("You are unauthorized.");
+    }
+});
+app.post("/authenticate", function(request, response, next) {
+    let newCookie = authentication.getWebAccessToken(request.body.password);
+
+    if(newCookie !== "") {
+        response.cookie('auth', newCookie, {maxAge: 900000, httpOnly: true, sameSite: "strict"});
+        response.send("Successfully Authenticated.");
+    } else {
+        response.status(401).send("Incorrect password.");
     }
 });
 

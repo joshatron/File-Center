@@ -43,5 +43,9 @@ exports.getConfig = function(configString) {
     let config = JSON.parse(configString);
     config = addDefaults(config);
 
+    if(!config.https && config.webPassword !== "") {
+        console.warn("Warning: Using a password without HTTPS may lead to the password leaking.");
+    }
+
     return config;
 }

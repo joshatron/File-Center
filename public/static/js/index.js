@@ -47,7 +47,7 @@ $(function() {
 
     //Check if need authentication
     $.ajax({
-        url: '/api/config',
+        url: '/api/files',
         type: 'GET',
         success: function(response){
             applyConfig();

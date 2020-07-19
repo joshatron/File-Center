@@ -63,7 +63,7 @@ app.use(cookieParser());
 app.use(bodyParser.json())
 
 authentication.initialize(config.webPassword);
-app.use("/api/*", function (request, response, next) {
+app.use("/api/files", function (request, response, next) {
     if(authentication.checkToken(request, config)) {
         next();
     } else {

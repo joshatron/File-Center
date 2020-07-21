@@ -23,19 +23,25 @@ var configFile = path.join(__dirname, 'config', 'config.json');
 var config = configParse.getConfig(fs.readFileSync(configFile, 'utf8'));
 console.log("Config: ");
 console.log(config);
-var fsWait = false;
-fs.watch(configFile, (event, filename) => {
-    if (filename) {
-        if (fsWait) return;
-        fsWait = setTimeout(() => {
-            fsWait = false;
-        }, 100);
+//Using watchFile instead of watch because editting in vim was causing errors.
+fs.watchFile(configFile, (curr, prev) => {
+    if(curr.mtime > prev.mtime) {
+        fs.readFile(configFile, function(err, data) {
+            if(err) {
+                console.log("Couldn't read config file change.");
+            } else {
+                config = configParse.getConfig(data);
 
-        config = configParse.getConfig(fs.readFileSync(configFile, 'utf8'));
-        stats.updateStatsFile(config.statsFile);
-        authentication.updateWebAccessPassword(config.webPassword);
-        console.log("Config changed. New config: ");
-        console.log(config);
+                stats.updateStatsFile(config.statsFile);
+                authentication.updateWebAccessPassword(config.webPassword);
+                if(!fs.existsSync(config.dir)) {
+                    fs.mkdirSync(config.dir);
+                }
+
+                console.log("Config changed. New config: ");
+                console.log(config);
+            }
+        });
     }
 });
 

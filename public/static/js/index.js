@@ -31,14 +31,14 @@ $(function() {
     let uploads = false;
     let table = null;
 
-    $.get("/config", function(config) {
+    $.get("/api/config", function(config) {
         banner = config.banner;
         uploads = config.uploads;
 
         displayBanner();
 
         $.ajax({
-            url: '/api/files',
+            url: '/api/web/files',
             type: 'GET',
             success: function(response){
                 displayUploads();
@@ -101,7 +101,7 @@ $(function() {
     function displayUploads() {
         if(uploads) {
             $('#dropzone').addClass("dropzone");
-            let url = "/api/upload";
+            let url = "/api/web/upload";
             if(path !== "") {
                 url = url + "/" + path;
             }
@@ -120,7 +120,7 @@ $(function() {
 
     //Insert table data
     function getFiles() {
-        $.get("/api/files", function(files) {
+        $.get("/api/web/files", function(files) {
             path.split("/").forEach(function(folder) {
                 for(file of files) {
                     if(file.name === folder) {
@@ -168,7 +168,7 @@ $(function() {
                         toDownload.push(path + $(this).val());
                     }
                 });
-                window.open('/api/downloadZip?files=' + JSON.stringify(toDownload), '_blank');
+                window.open('/api/web/downloadZip?files=' + JSON.stringify(toDownload), '_blank');
             });
 
             if(path !== "") {
@@ -202,7 +202,7 @@ $(function() {
                 row = row + file.name + '</td>' + 
                     '<td>' + getPrettySize(file.size) + '</td>' +
                     '<td>' +
-                        '<a href="/api/download?file=' + path + file.name + '" download>' +
+                        '<a href="/api/web/download?file=' + path + file.name + '" download>' +
                             '<button class="btn btn-outline-primary float-right">' + 
                                 '<i class="fas fa-download"></i> ' +
                                 '<span class="d-none d-md-inline">Download</span>' +

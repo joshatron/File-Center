@@ -69,7 +69,7 @@ app.use(cookieParser());
 app.use(bodyParser.json())
 
 authentication.initialize(config.webPassword);
-app.use("/api/*", function (request, response, next) {
+app.use("/api/web/*", function (request, response, next) {
     if(authentication.checkToken(request, config)) {
         next();
     } else {
@@ -131,14 +131,14 @@ var getZipFiles = function(files, done) {
     });
 };
 
-app.get('/api/files', function(request, response) {
+app.get('/api/web/files', function(request, response) {
     fileWalker.getFiles(config.dir).then(
         function(value) {
             response.json(value)
         });
 });
 
-app.get('/config', function(request, response) {
+app.get('/api/config', function(request, response) {
     stats.addPageView(config);
     let uiConfig = {
         banner: config.banner,
@@ -147,7 +147,7 @@ app.get('/config', function(request, response) {
     response.send(uiConfig);
 });
 
-app.post('/api/upload', upload.any(), function(request, response, next) {
+app.post('/api/web/upload', upload.any(), function(request, response, next) {
     if(config.uploads === true) {
         response.send("Upload successful");
     } else {
@@ -155,7 +155,7 @@ app.post('/api/upload', upload.any(), function(request, response, next) {
     }
 });
 
-app.post('/api/upload/*', upload.any(), function(request, response, next) {
+app.post('/api/web/upload/*', upload.any(), function(request, response, next) {
     if(config.uploads === true) {
         response.send("Upload successful");
     } else {
@@ -163,7 +163,7 @@ app.post('/api/upload/*', upload.any(), function(request, response, next) {
     }
 });
 
-app.get('/api/download', function(request, response) {
+app.get('/api/web/download', function(request, response) {
     fs.stat(path.join(config.dir, request.query.file), function (error, fileStats) {
         if (fileStats === undefined) {
             response.status(404).send('File ' + request.query.file + ' not found');
@@ -183,11 +183,16 @@ app.get('/api/download', function(request, response) {
     });
 });
 
-app.get('/api/downloadZip', function(request, response) {
+app.get('/api/web/downloadZip', function(request, response) {
     getZipFiles(JSON.parse(request.query.files), function(error, results) {
         response.zip(results, config.banner.replace(/ /gi, '-') + '.zip');
     });
 });
+
+// app.post('/api/admin/rename');
+// app.delete('/api/admin/delete');
+// app.put('/api/admin/mkdir');
+// app.post('/api/admin/setConfig');
 
 if(config.https) {
     let credentials = {

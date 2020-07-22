@@ -69,7 +69,7 @@ app.use(cookieParser());
 app.use(bodyParser.json())
 
 authentication.initialize(config.webPassword);
-app.use("/api/files", function (request, response, next) {
+app.use("/api/*", function (request, response, next) {
     if(authentication.checkToken(request, config)) {
         next();
     } else {
@@ -138,7 +138,7 @@ app.get('/api/files', function(request, response) {
         });
 });
 
-app.get('/api/config', function(request, response) {
+app.get('/config', function(request, response) {
     stats.addPageView(config);
     let uiConfig = {
         banner: config.banner,

@@ -31,7 +31,7 @@ $(function() {
     let uploads = false;
     let table = null;
 
-    $.get("/api/config", function(config) {
+    $.get("/config", function(config) {
         banner = config.banner;
         uploads = config.uploads;
 

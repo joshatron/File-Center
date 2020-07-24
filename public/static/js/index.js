@@ -35,6 +35,8 @@ $(function() {
         banner = config.banner;
         uploads = config.uploads;
 
+        $('head').append('<link href="/public/css/bootstrap-flatly.css" type="text/css" rel="stylesheet">');
+
         displayBanner();
 
         $.ajax({

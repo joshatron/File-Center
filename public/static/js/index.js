@@ -35,21 +35,20 @@ $(function() {
         banner = config.banner;
         uploads = config.uploads;
 
-        $('head').append('<link href="/public/css/bootstrap-flatly.css" type="text/css" rel="stylesheet">');
+        if(config.darkMode) {
+            $('head').append('<link href="/public/css/bootstrap-dark.css" type="text/css" rel="stylesheet">');
+        } else {
+            $('head').append('<link href="/public/css/bootstrap-light.css" type="text/css" rel="stylesheet">');
+        }
 
         displayBanner();
 
-        $.ajax({
-            url: '/api/web/files',
-            type: 'GET',
-            success: function(response){
-                displayUploads();
-                getFiles();
-            },
-            error: function() {
-                displayAuth();
-            }
-        });
+        if(config.webPassword) {
+            displayAuth();
+        } else {
+            displayUploads();
+            getFiles();
+        }
     });
 
     function displayBanner() {

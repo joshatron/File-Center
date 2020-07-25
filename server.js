@@ -142,7 +142,9 @@ app.get('/api/config', function(request, response) {
     stats.addPageView(config);
     let uiConfig = {
         banner: config.banner,
-        uploads: config.uploads
+        uploads: config.uploads,
+        darkMode: config.darkMode,
+        webPassword: config.webPassword !== ""
     }
     response.send(uiConfig);
 });

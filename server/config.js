@@ -35,6 +35,9 @@ var addDefaults = function(config) {
     if(config.webPassword === undefined) {
         config.webPassword = "";
     }
+    if(config.darkMode === undefined) {
+        config.darkMode = false;
+    }
 
     return config;
 }

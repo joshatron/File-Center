@@ -59,8 +59,10 @@ $(function() {
         $('#auth').append(
             '<div class="col form-group row mt-5">' +
                 '<label class="col-1 col-form-label" for="web-password">Password:</label>' +
-                '<input type="password" class="col-10 form-control" id="web-password">' +
-                '<button id="auth-submit" type="submit" class="col-1 btn btn-primary">Submit</button>' +
+                '<div class="col-10">' +
+                    '<input type="password" class="form-control" id="web-password">' +
+                '</div>' +
+                '<button id="auth-submit" type="submit" class="col-1 btn btn-outline-primary ">Submit</button>' +
             '</div>'
         );
 
@@ -91,6 +93,7 @@ $(function() {
             },
             error: function(xhr, status, error) {
                 $('#web-password').val('');
+                $('#web-password').addClass('is-invalid');
             }
         });
     }

@@ -5,8 +5,12 @@ const crypto = require("crypto");
 var webAccessPassword;
 var webAccessToken;
 
-exports.initialize = function(webAccessPass) {
+var adminPassword;
+var adminToken;
+
+exports.initialize = function(webAccessPass, adminPass) {
     this.updateWebAccessPassword(webAccessPass);
+    this.updateAdminPassword(adminPass);
 }
 
 exports.getWebAccessToken = function(webAccessPass) {
@@ -17,15 +21,33 @@ exports.getWebAccessToken = function(webAccessPass) {
     return "";
 }
 
-exports.checkToken = function(request, config) {
-    if(webAccessPassword === "") {
-        return true;
+exports.getAdminToken = function(adminPass) {
+    if(adminPass === adminPassword) {
+        return adminToken;
     }
 
-    return request.cookies['auth'] === webAccessToken;
+    return "";
+}
+
+exports.checkToken = function(request, config) {
+    let path = request.baseUrl;
+
+    if(path.startsWith('/api/web') && webAccessPassword !== '') {
+        return request.cookies['auth'] === adminToken || 
+               request.cookies['auth'] === webAccessToken;
+    } else if(path.startsWith('/api/admin')) {
+        return request.cookies['auth'] === adminToken;
+    }
+
+    return true;
 }
 
 exports.updateWebAccessPassword = function(webAccessPass) {
     webAccessPassword = webAccessPass;
     webAccessToken = crypto.randomBytes(32).toString("hex");
+}
+
+exports.updateAdminPassword = function(adminPass) {
+    adminPassword = adminPass;
+    adminToken = crypto.randomBytes(32).toString("hex");
 }

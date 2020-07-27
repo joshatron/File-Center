@@ -23,7 +23,7 @@ var configFile = path.join(__dirname, 'config', 'config.json');
 var config = configParse.getConfig(fs.readFileSync(configFile, 'utf8'));
 console.log("Config: ");
 console.log(config);
-//Using watchFile instead of watch because editting in vim was causing errors.
+//Using watchFile instead of watch because editting in vim was causing problems.
 fs.watchFile(configFile, (curr, prev) => {
     if(curr.mtime > prev.mtime) {
         fs.readFile(configFile, function(err, data) {
@@ -69,7 +69,7 @@ app.use(cookieParser());
 app.use(bodyParser.json())
 
 authentication.initialize(config.webPassword);
-app.use("/api/web/*", function (request, response, next) {
+app.use("*", function (request, response, next) {
     if(authentication.checkToken(request, config)) {
         next();
     } else {
@@ -78,6 +78,16 @@ app.use("/api/web/*", function (request, response, next) {
 });
 app.post("/authenticate", function(request, response, next) {
     let newCookie = authentication.getWebAccessToken(request.body.password);
+
+    if(newCookie !== "") {
+        response.cookie('auth', newCookie, {maxAge: 900000, httpOnly: true, sameSite: "strict"});
+        response.send("Successfully Authenticated.");
+    } else {
+        response.status(401).send("Incorrect password.");
+    }
+});
+app.post("/authenticateAdmin", function(request, response, next) {
+    let newCookie = authentication.getAdminToken(request.body.password);
 
     if(newCookie !== "") {
         response.cookie('auth', newCookie, {maxAge: 900000, httpOnly: true, sameSite: "strict"});
@@ -145,7 +155,7 @@ app.get('/api/config', function(request, response) {
         uploads: config.uploads,
         darkMode: config.darkMode,
         webPassword: config.webPassword !== ""
-    }
+    };
     response.send(uiConfig);
 });
 

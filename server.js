@@ -6,7 +6,6 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser')
 var app = express();
 var morgan = require('morgan');
-var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
 var fs = require('fs');
 var multer = require('multer');

@@ -158,21 +158,15 @@ app.get('/api/config', function(request, response) {
     response.send(uiConfig);
 });
 
-app.post('/api/web/upload', upload.any(), function(request, response, next) {
-    if(config.uploads === true) {
+if(config.uploads) {
+    app.post('/api/web/upload', upload.any(), function(request, response, next) {
         response.send("Upload successful");
-    } else {
-        response.status(403).send("File uploading has been locked");
-    }
-});
+    });
 
-app.post('/api/web/upload/*', upload.any(), function(request, response, next) {
-    if(config.uploads === true) {
+    app.post('/api/web/upload/*', upload.any(), function(request, response, next) {
         response.send("Upload successful");
-    } else {
-        response.status(403).send("File uploading has been locked");
-    }
-});
+    });
+}
 
 app.get('/api/web/download', function(request, response) {
     fs.stat(path.join(config.dir, request.query.file), function (error, fileStats) {

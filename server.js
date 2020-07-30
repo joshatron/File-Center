@@ -194,7 +194,18 @@ app.get('/api/web/downloadZip', function(request, response) {
     });
 });
 
-// app.post('/api/admin/rename');
+app.post('/api/admin/rename', function(request, response) {
+    fs.rename(path.join(config.dir, request.body.original), 
+              path.join(config.dir, request.body.replacement), 
+              (error) => {
+        if(error) {
+            console.log(error);
+            response.status(409).send('Could not rename file.');
+        } else {
+            response.status(200).send('File renamed.');
+        }
+    });
+});
 // app.delete('/api/admin/delete');
 // app.put('/api/admin/mkdir');
 // app.post('/api/admin/setConfig');

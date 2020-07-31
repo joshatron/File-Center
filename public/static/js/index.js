@@ -43,11 +43,11 @@ $(function() {
 
         displayBanner();
 
-        if(config.webPassword) {
-            displayAuth();
-        } else {
+        if(config.authenticated) {
             displayUploads();
             getFiles();
+        } else {
+            displayAuth();
         }
     });
 

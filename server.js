@@ -69,7 +69,7 @@ app.use(bodyParser.json())
 
 authentication.initialize(config.webPassword);
 app.use("*", function (request, response, next) {
-    if(authentication.checkToken(request, config)) {
+    if(authentication.checkToken(request)) {
         next();
     } else {
         response.status(401).send("You are unauthorized.");
@@ -153,7 +153,7 @@ app.get('/api/config', function(request, response) {
         banner: config.banner,
         uploads: config.uploads,
         darkMode: config.darkMode,
-        webPassword: config.webPassword !== ""
+        authenticated: authentication.checkWebAuthenticated(request)
     };
     response.send(uiConfig);
 });
@@ -217,7 +217,18 @@ app.delete('/api/admin/delete', function(request, response) {
         }
     })
 });
-// app.put('/api/admin/mkdir');
+
+app.put('/api/admin/mkdir', function(request, response) {
+    fs.mkdir(path.join(config.dir, request.body.folder), {recursive: true}, (error) => {
+        if(error) {
+            console.log(error);
+            response.status(409).send('Could not create folder.');
+        } else {
+            response.status(200).send('Folder created.');
+        }
+    })
+});
+
 // app.post('/api/admin/setConfig');
 
 if(config.https) {

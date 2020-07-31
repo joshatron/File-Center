@@ -29,7 +29,7 @@ exports.getAdminToken = function(adminPass) {
     return "";
 }
 
-exports.checkToken = function(request, config) {
+exports.checkToken = function(request) {
     let path = request.baseUrl;
 
     if(path.startsWith('/api/web') && webAccessPassword !== '') {
@@ -40,6 +40,11 @@ exports.checkToken = function(request, config) {
     }
 
     return true;
+}
+
+exports.checkWebAuthenticated = function(request) {
+    return request.cookies['auth'] === adminToken || 
+           request.cookies['auth'] === webAccessToken;
 }
 
 exports.updateWebAccessPassword = function(webAccessPass) {

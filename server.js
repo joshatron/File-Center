@@ -206,7 +206,17 @@ app.post('/api/admin/rename', function(request, response) {
         }
     });
 });
-// app.delete('/api/admin/delete');
+
+app.delete('/api/admin/delete', function(request, response) {
+    fs.unlink(path.join(config.dir, request.body.file), (error) => {
+        if(error) {
+            console.log(error);
+            response.status(409).send('Could not delete file.');
+        } else {
+            response.status(200).send('File deleted.');
+        }
+    })
+});
 // app.put('/api/admin/mkdir');
 // app.post('/api/admin/setConfig');
 

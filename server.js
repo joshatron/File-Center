@@ -51,8 +51,8 @@ if(!fs.existsSync(config.dir)) {
 var storage = multer.diskStorage({
     destination: function (request, file, cb) {
         let folder = config.dir;
-        if(request.url.length > 12) {
-            folder = path.join(folder, request.url.substring(12));
+        if(request.url.length > 16) {
+            folder = path.join(folder, request.url.substring(16));
         }
         cb(null, folder);
     },

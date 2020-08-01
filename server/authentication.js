@@ -43,7 +43,8 @@ exports.checkToken = function(request) {
 }
 
 exports.checkWebAuthenticated = function(request) {
-    return request.cookies['auth'] === adminToken || 
+    return webAccessPassword === "" ||
+           request.cookies['auth'] === adminToken || 
            request.cookies['auth'] === webAccessToken;
 }
 

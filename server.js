@@ -9,6 +9,7 @@ var morgan = require('morgan');
 var methodOverride = require('method-override');
 var fs = require('fs');
 var multer = require('multer');
+var Busboy = require('busboy')
 var path = require('path');
 var zip = require('express-zip');
 var ip = require('ip');
@@ -159,12 +160,35 @@ app.get('/api/config', function(request, response) {
 });
 
 if(config.uploads) {
-    app.post('/api/web/upload', upload.any(), function(request, response, next) {
-        response.send("Upload successful");
+    app.post('/api/web/upload', function(request, response, next) {
+        var busboy = new Busboy({ headers: request.headers });
+        busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
+            var saveTo = path.join(config.dir, filename);
+            file.pipe(fs.createWriteStream(saveTo));
+        });
+ 
+        busboy.on('finish', function() {
+            response.writeHead(200, { 'Connection': 'close' });
+            response.end("That's all folks!");
+        });
+     
+        return request.pipe(busboy);
     });
 
-    app.post('/api/web/upload/*', upload.any(), function(request, response, next) {
-        response.send("Upload successful");
+    app.post('/api/web/upload/*', function(request, response, next) {
+        var busboy = new Busboy({ headers: request.headers });
+        let folder = path.join(config.dir, request.url.substring(16));
+        busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
+            var saveTo = path.join(folder, filename);
+            file.pipe(fs.createWriteStream(saveTo));
+        });
+ 
+        busboy.on('finish', function() {
+            response.writeHead(200, { 'Connection': 'close' });
+            response.end("That's all folks!");
+        });
+     
+        return request.pipe(busboy);
     });
 }
 

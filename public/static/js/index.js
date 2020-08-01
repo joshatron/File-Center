@@ -112,6 +112,11 @@ $(function() {
             var myDropzone = new Dropzone("#dropzone", { 
                 url: url,
                 maxFilesize: 1000000,
+                renameFile: function(file) {
+                    //console.log(path + file.name);
+                    //return path + file.name;
+                    return file.name;
+                },
                 init: function(){
                     this.on("complete", function(file) {
                         this.removeFile(file);

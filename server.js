@@ -8,7 +8,6 @@ var app = express();
 var morgan = require('morgan');
 var methodOverride = require('method-override');
 var fs = require('fs');
-var multer = require('multer');
 var Busboy = require('busboy')
 var path = require('path');
 var zip = require('express-zip');
@@ -48,20 +47,6 @@ fs.watchFile(configFile, (curr, prev) => {
 if(!fs.existsSync(config.dir)) {
     fs.mkdirSync(config.dir);
 }
-
-var storage = multer.diskStorage({
-    destination: function (request, file, cb) {
-        let folder = config.dir;
-        if(request.url.length > 16) {
-            folder = path.join(folder, request.url.substring(16));
-        }
-        cb(null, folder);
-    },
-    filename: function (request, file, cb) {
-        cb(null, file.originalname);
-    }
-});
-var upload = multer({storage: storage});
 
 stats.initialize(config.statsFile);
 
@@ -167,16 +152,7 @@ if(config.uploads) {
             file.pipe(fs.createWriteStream(saveTo));
         });
 
-        busboy.on('end', function() {
-            console.log("end");
-        })
-
-        busboy.on('error', function (err) {
-            console.log('Error while parsing the form: ', err);
-        })
- 
         busboy.on('finish', function() {
-            console.log("finish");
             response.writeHead(200, { 'Connection': 'close' });
             response.end("That's all folks!");
         });

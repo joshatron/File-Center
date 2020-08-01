@@ -112,6 +112,7 @@ $(function() {
             var myDropzone = new Dropzone("#dropzone", { 
                 url: url,
                 maxFilesize: 1000000,
+                timeout: 3600000,
                 renameFile: function(file) {
                     //console.log(path + file.name);
                     //return path + file.name;

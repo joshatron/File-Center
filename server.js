@@ -166,8 +166,17 @@ if(config.uploads) {
             var saveTo = path.join(config.dir, filename);
             file.pipe(fs.createWriteStream(saveTo));
         });
+
+        busboy.on('end', function() {
+            console.log("end");
+        })
+
+        busboy.on('error', function (err) {
+            console.log('Error while parsing the form: ', err);
+        })
  
         busboy.on('finish', function() {
+            console.log("finish");
             response.writeHead(200, { 'Connection': 'close' });
             response.end("That's all folks!");
         });

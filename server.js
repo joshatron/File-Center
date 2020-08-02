@@ -13,47 +13,23 @@ var path = require('path');
 var zip = require('express-zip');
 var ip = require('ip');
 
-var configParse = require('./server/config');
+var config = require('./server/config');
 var fileWalker = require('./server/file-walker');
 var authentication = require('./server/authentication');
 var stats = require('./server/stats');
 
-var configFile = path.join(__dirname, 'config', 'config.json');
-var config = configParse.getConfig(fs.readFileSync(configFile, 'utf8'));
-console.log("Config: ");
-console.log(config);
-//Using watchFile instead of watch because editting in vim was causing problems.
-fs.watchFile(configFile, (curr, prev) => {
-    if(curr.mtime > prev.mtime) {
-        fs.readFile(configFile, function(err, data) {
-            if(err) {
-                console.log("Couldn't read config file change.");
-            } else {
-                config = configParse.getConfig(data);
+config.initializeConfig(path.join(__dirname, 'config', 'config.json'));
 
-                stats.updateStatsFile(config.statsFile);
-                authentication.updateWebAccessPassword(config.webPassword);
-                if(!fs.existsSync(config.dir)) {
-                    fs.mkdirSync(config.dir);
-                }
-
-                console.log("Config changed. New config: ");
-                console.log(config);
-            }
-        });
-    }
-});
-
-if(!fs.existsSync(config.dir)) {
-    fs.mkdirSync(config.dir);
+if(!fs.existsSync(config.getConfig().dir)) {
+    fs.mkdirSync(config.getConfig().dir);
 }
 
-stats.initialize(config.statsFile);
+stats.initialize(config.getConfig().statsFile);
 
 app.use(cookieParser());
 app.use(bodyParser.json())
 
-authentication.initialize(config.webPassword);
+authentication.initialize(config.getConfig().webPassword);
 app.use("*", function (request, response, next) {
     if(authentication.checkToken(request)) {
         next();
@@ -96,10 +72,10 @@ var getZipFiles = function(files, done) {
     var toZip = [];
     var processed = 0;
     files.forEach(function(file) {
-        fs.stat(path.join(config.dir, file), function(error, fileStats) {
+        fs.stat(path.join(config.getConfig().dir, file), function(error, fileStats) {
             if(fileStats.isDirectory()) {
                 stats.addDownload(file + '/');
-                fs.readdir(path.join(config.dir, file), function(error, contents) {
+                fs.readdir(path.join(config.getConfig().dir, file), function(error, contents) {
                     contents = contents.map(function(result) {
                         return path.join(file, result);
                     });
@@ -115,7 +91,7 @@ var getZipFiles = function(files, done) {
             }
             else {
                 stats.addDownload(file);
-                toZip.push({path: path.join(config.dir, file), name: file});
+                toZip.push({path: path.join(config.getConfig().dir, file), name: file});
                 processed++;
 
                 if (processed === files.length) {
@@ -127,28 +103,28 @@ var getZipFiles = function(files, done) {
 };
 
 app.get('/api/web/files', function(request, response) {
-    fileWalker.getFiles(config.dir).then(
+    fileWalker.getFiles(config.getConfig().dir).then(
         function(value) {
             response.json(value)
         });
 });
 
 app.get('/api/config', function(request, response) {
-    stats.addPageView(config);
+    stats.addPageView(config.getConfig());
     let uiConfig = {
-        banner: config.banner,
-        uploads: config.uploads,
-        darkMode: config.darkMode,
+        banner: config.getConfig().banner,
+        uploads: config.getConfig().uploads,
+        darkMode: config.getConfig().darkMode,
         authenticated: authentication.checkWebAuthenticated(request)
     };
     response.send(uiConfig);
 });
 
 app.post('/api/web/upload', function(request, response, next) {
-    if(config.uploads) {
+    if(config.getConfig().uploads) {
         var busboy = new Busboy({ headers: request.headers });
         busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
-            var saveTo = path.join(config.dir, filename);
+            var saveTo = path.join(config.getConfig().dir, filename);
             file.pipe(fs.createWriteStream(saveTo));
         });
 
@@ -164,9 +140,9 @@ app.post('/api/web/upload', function(request, response, next) {
 });
 
 app.post('/api/web/upload/*', function(request, response, next) {
-    if(config.uploads) {
+    if(config.getConfig().uploads) {
         var busboy = new Busboy({ headers: request.headers });
-        let folder = path.join(config.dir, request.url.substring(16));
+        let folder = path.join(config.getConfig().dir, request.url.substring(16));
         busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
             var saveTo = path.join(folder, filename);
             file.pipe(fs.createWriteStream(saveTo));
@@ -184,7 +160,7 @@ app.post('/api/web/upload/*', function(request, response, next) {
 });
 
 app.get('/api/web/download', function(request, response) {
-    fs.stat(path.join(config.dir, request.query.file), function (error, fileStats) {
+    fs.stat(path.join(config.getConfig().dir, request.query.file), function (error, fileStats) {
         if (fileStats === undefined) {
             response.status(404).send('File ' + request.query.file + ' not found');
         }
@@ -197,7 +173,7 @@ app.get('/api/web/download', function(request, response) {
             }
             else {
                 stats.addDownload(request.query.file);
-                response.download(path.join(config.dir, request.query.file));
+                response.download(path.join(config.getConfig().dir, request.query.file));
             }
         }
     });
@@ -205,13 +181,13 @@ app.get('/api/web/download', function(request, response) {
 
 app.get('/api/web/downloadZip', function(request, response) {
     getZipFiles(JSON.parse(request.query.files), function(error, results) {
-        response.zip(results, config.banner.replace(/ /gi, '-') + '.zip');
+        response.zip(results, config.getConfig().banner.replace(/ /gi, '-') + '.zip');
     });
 });
 
 app.post('/api/admin/rename', function(request, response) {
-    fs.rename(path.join(config.dir, request.body.original), 
-              path.join(config.dir, request.body.replacement), 
+    fs.rename(path.join(config.getConfig().dir, request.body.original), 
+              path.join(config.getConfig().dir, request.body.replacement), 
               (error) => {
         if(error) {
             console.log(error);
@@ -223,7 +199,7 @@ app.post('/api/admin/rename', function(request, response) {
 });
 
 app.delete('/api/admin/delete', function(request, response) {
-    fs.unlink(path.join(config.dir, request.body.file), (error) => {
+    fs.unlink(path.join(config.getConfig().dir, request.body.file), (error) => {
         if(error) {
             console.log(error);
             response.status(409).send('Could not delete file.');
@@ -234,7 +210,7 @@ app.delete('/api/admin/delete', function(request, response) {
 });
 
 app.put('/api/admin/mkdir', function(request, response) {
-    fs.mkdir(path.join(config.dir, request.body.folder), {recursive: true}, (error) => {
+    fs.mkdir(path.join(config.getConfig().dir, request.body.folder), {recursive: true}, (error) => {
         if(error) {
             console.log(error);
             response.status(409).send('Could not create folder.');
@@ -246,15 +222,15 @@ app.put('/api/admin/mkdir', function(request, response) {
 
 // app.post('/api/admin/setConfig');
 
-if(config.https) {
+if(config.getConfig().https) {
     let credentials = {
-        cert: fs.readFileSync(config.httpsCert, 'utf8'),
-        key: fs.readFileSync(config.httpsKey, 'utf8'),
+        cert: fs.readFileSync(config.getConfig().httpsCert, 'utf8'),
+        key: fs.readFileSync(config.getConfig().httpsKey, 'utf8'),
     };
-    https.createServer(credentials, app).listen(config.port);
+    https.createServer(credentials, app).listen(config.getConfig().port);
 } else {
-    app.listen(config.port);
+    app.listen(config.getConfig().port);
 }
 
 
-console.log('Local address: ' + ip.address() + ':' + config.port);
+console.log('Local address: ' + ip.address() + ':' + config.getConfig().port);

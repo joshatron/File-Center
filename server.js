@@ -144,8 +144,8 @@ app.get('/api/config', function(request, response) {
     response.send(uiConfig);
 });
 
-if(config.uploads) {
-    app.post('/api/web/upload', function(request, response, next) {
+app.post('/api/web/upload', function(request, response, next) {
+    if(config.uploads) {
         var busboy = new Busboy({ headers: request.headers });
         busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
             var saveTo = path.join(config.dir, filename);
@@ -156,26 +156,32 @@ if(config.uploads) {
             response.writeHead(200, { 'Connection': 'close' });
             response.end("That's all folks!");
         });
-     
+    
         return request.pipe(busboy);
-    });
+    } else {
+        response.status(405).send('Uploading is not currently allowed.');
+    }
+});
 
-    app.post('/api/web/upload/*', function(request, response, next) {
+app.post('/api/web/upload/*', function(request, response, next) {
+    if(config.uploads) {
         var busboy = new Busboy({ headers: request.headers });
         let folder = path.join(config.dir, request.url.substring(16));
         busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
             var saveTo = path.join(folder, filename);
             file.pipe(fs.createWriteStream(saveTo));
         });
- 
+
         busboy.on('finish', function() {
             response.writeHead(200, { 'Connection': 'close' });
             response.end("That's all folks!");
         });
-     
+    
         return request.pipe(busboy);
-    });
-}
+    } else {
+        response.status(405).send('Uploading is not currently allowed.');
+    }
+});
 
 app.get('/api/web/download', function(request, response) {
     fs.stat(path.join(config.dir, request.query.file), function (error, fileStats) {

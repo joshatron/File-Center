@@ -37,8 +37,6 @@ $(function() {
 
         if(config.darkMode) {
             $('head').append('<link href="/public/css/bootstrap-dark.css" type="text/css" rel="stylesheet">');
-        } else {
-            $('head').append('<link href="/public/css/bootstrap-light.css" type="text/css" rel="stylesheet">');
         }
 
         displayBanner();

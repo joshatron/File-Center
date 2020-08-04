@@ -53,6 +53,14 @@ function setConfig(configString) {
     fixCurrentConfig();
 }
 
+function saveConfig() {
+    fs.writeFile(configFile, JSON.stringify(currentConfig, null, 4), function (err) {
+        if(err) {
+            console.log('Error saving config: ', err);
+        }
+    }); 
+}
+
 exports.initializeConfig = function(file) {
     configFile = file;
     setConfig(fs.readFileSync(configFile, 'utf8'));
@@ -81,10 +89,10 @@ exports.initializeConfig = function(file) {
     });
 }
 
-exports.overrideConfig = function(newConfigString) {
-    let newConfig = JSON.parse(newConfigString);
-    let newKeys = Object.keys(newConfig);
-    console.log(newKeys);
+exports.overrideConfig = function(newConfig) {
+    Object.keys(newConfig).forEach(e => currentConfig[e] = newConfig[e]);
+    fixCurrentConfig();
+    saveConfig();
 }
 
 exports.getConfig = function() {

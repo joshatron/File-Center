@@ -220,7 +220,11 @@ app.put('/api/admin/mkdir', function(request, response) {
     })
 });
 
-// app.post('/api/admin/setConfig');
+app.post('/api/admin/setConfig', function(request, response) {
+    config.overrideConfig(request.body);
+
+    response.status(200).send('Config updated.');
+});
 
 if(config.getConfig().https) {
     let credentials = {

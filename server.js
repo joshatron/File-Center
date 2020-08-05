@@ -226,6 +226,10 @@ app.post('/api/admin/setConfig', function(request, response) {
     response.status(200).send('Config updated.');
 });
 
+app.get('/api/admin/config', function(request, response) {
+    response.status(200).send(config.getConfig());
+});
+
 if(config.getConfig().https) {
     let credentials = {
         cert: fs.readFileSync(config.getConfig().httpsCert, 'utf8'),

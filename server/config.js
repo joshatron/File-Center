@@ -39,6 +39,9 @@ function fixCurrentConfig() {
     if(currentConfig.webPassword === undefined) {
         currentConfig.webPassword = "";
     }
+    if(currentConfig.adminPassword === undefined) {
+        currentConfig.adminPassword = "";
+    }
     if(currentConfig.darkMode === undefined) {
         currentConfig.darkMode = false;
     }

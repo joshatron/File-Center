@@ -36,7 +36,7 @@ exports.checkToken = function(request) {
         return request.cookies['auth'] === adminToken || 
                request.cookies['auth'] === webAccessToken;
     } else if(path.startsWith('/api/admin')) {
-        return request.cookies['auth'] === adminToken;
+        return adminPassword !== "" && request.cookies['auth'] === adminToken;
     }
 
     return true;

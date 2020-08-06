@@ -29,7 +29,7 @@ stats.initialize(config.getConfig().statsFile);
 app.use(cookieParser());
 app.use(bodyParser.json())
 
-authentication.initialize(config.getConfig().webPassword);
+authentication.initialize(config.getConfig().webPassword, config.getConfig().adminPassword);
 app.use("*", function (request, response, next) {
     if(authentication.checkToken(request)) {
         next();

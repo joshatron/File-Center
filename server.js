@@ -31,7 +31,7 @@ app.use(bodyParser.json())
 
 authentication.initialize(config.getConfig().webPassword, config.getConfig().adminPassword);
 app.use("*", function (request, response, next) {
-    if(authentication.checkToken(request)) {
+    if(authentication.checkAuthorized(request)) {
         next();
     } else {
         response.status(401).send("You are unauthorized.");
@@ -63,9 +63,6 @@ app.use('/', express.static(path.join(__dirname, 'public', 'html')));
 app.use('/files', express.static(path.join(__dirname, 'public', 'html')));
 app.use('/files/*', express.static(path.join(__dirname, 'public', 'html')));
 app.use(morgan('dev'));
-app.use(bodyParser.urlencoded({extended:'true', limit: '1tb'}));
-app.use(bodyParser.json({limit: '1tb'}));
-app.use(bodyParser.json({type: 'application/vnd.api+json', limit: '1tb'}));
 app.use(methodOverride());
 
 var getZipFiles = function(files, done) {

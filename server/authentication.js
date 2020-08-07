@@ -29,7 +29,7 @@ exports.getAdminToken = function(adminPass) {
     return "";
 }
 
-exports.checkToken = function(request) {
+exports.checkAuthorized = function(request) {
     let path = request.baseUrl;
 
     if(path.startsWith('/api/web') && webAccessPassword !== '') {

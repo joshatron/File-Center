@@ -66,7 +66,16 @@ function saveConfig() {
 
 exports.initializeConfig = function(file) {
     configFile = file;
-    setConfig(fs.readFileSync(configFile, 'utf8'));
+
+    try {
+        setConfig(fs.readFileSync(configFile, 'utf8'));
+    } catch(err) {
+        console.log("Failed to read config file. Using defaults.");
+        fs.mkdirSync(path.dirname(configFile));
+        fixCurrentConfig();
+        saveConfig();
+    }
+
     console.log("Config: ");
     console.log(currentConfig);
     //Using watchFile instead of watch because editting in vim was causing problems.

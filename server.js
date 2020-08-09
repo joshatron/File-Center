@@ -62,6 +62,9 @@ app.use('/public', express.static(path.join(__dirname, 'public', 'static')));
 app.use('/', express.static(path.join(__dirname, 'public', 'html')));
 app.use('/files', express.static(path.join(__dirname, 'public', 'html')));
 app.use('/files/*', express.static(path.join(__dirname, 'public', 'html')));
+app.use('/admin', express.static(path.join(__dirname, 'public', 'admin')));
+app.use('/admin/files', express.static(path.join(__dirname, 'public', 'admin')));
+app.use('/admin/files/*', express.static(path.join(__dirname, 'public', 'admin')));
 app.use(morgan('dev'));
 app.use(methodOverride());
 
@@ -236,6 +239,5 @@ if(config.getConfig().https) {
 } else {
     app.listen(config.getConfig().port);
 }
-
 
 console.log('Local address: ' + ip.address() + ':' + config.getConfig().port);

@@ -24,7 +24,7 @@ $(function() {
     if(path === "/") {
         path = "";
     } else {
-        path = path.substring(7);
+        path = path.substring(13);
     }
 
     let banner = "";
@@ -194,7 +194,7 @@ $(function() {
                 let pathParts = path.split("/");
                 let pathAbove = path.substring(0, path.length - pathParts[pathParts.length - 2].length - 1);
 
-                window.location.replace(window.location.origin + "/files/" + pathAbove);
+                window.location.replace(window.location.origin + "/admin/files/" + pathAbove);
             });
 
             files.forEach(file => {
@@ -223,7 +223,7 @@ $(function() {
             });
 
             $('.dir').click(function() {
-                window.location.replace(window.location.origin + "/files/" + path + $(this).text());
+                window.location.replace(window.location.origin + "/admin/files/" + path + $(this).text());
             })
 
             $('.file-checkbox').change(function() {

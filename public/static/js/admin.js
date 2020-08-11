@@ -41,16 +41,11 @@ $(function() {
 
         displayBanner();
 
-        if(config.authenticated) {
-            displayUploads();
-            getFiles();
-        } else {
-            displayAuth();
-        }
+        displayAuth();
     });
 
     function displayBanner() {
-        $('#banner').text(banner);
+        $('#banner').text(banner + " Admin");
     }
 
     function displayAuth() {
@@ -80,7 +75,7 @@ $(function() {
 
     function submitAuth() {
         $.ajax({
-            url: '/authenticate',
+            url: '/authenticateAdmin',
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify({password: $('#web-password').val()}),

@@ -146,9 +146,13 @@ $(function() {
                             '<th>File</th>' +
                             '<th>Size</th>' +
                             '<th>' +
+                                '<button id="download-files" class="btn btn-outline-danger float-right" style="padding-right: 0.75rem;">' +
+                                    '<i class="fas fa-trash" style="padding-right: 0rem;"></i>' +
+                                '</button>' +
+                            '</th>' +
+                            '<th>' +
                                 '<button id="download-files" class="btn btn-outline-primary float-right" style="padding-right: 0.75rem;">' +
                                     '<i class="fas fa-download" style="padding-right: 0rem;"></i>' +
-                                    '<span class="d-none d-md-inline" style="padding-right: 0rem;">Download</span> Selected' +
                                 '</button>' +
                             '</th>' +
                         '</tr>' +
@@ -181,6 +185,7 @@ $(function() {
                         '<td>..</td>' + 
                         '<td>' + path + '</td>' +
                         '<td></td>' +
+                        '<td></td>' +
                     '</tr>'
                 );
             }
@@ -205,10 +210,14 @@ $(function() {
                 row = row + file.name + '</td>' + 
                     '<td>' + getPrettySize(file.size) + '</td>' +
                     '<td>' +
+                        '<button id="' + path + file.name + '" class="btn btn-outline-danger float-right delete-file">' + 
+                            '<i class="fas fa-trash"></i> ' +
+                        '</button>' +
+                    '</td>' +
+                    '<td>' +
                         '<a href="/api/web/download?file=' + path + file.name + '" download>' +
                             '<button class="btn btn-outline-primary float-right">' + 
                                 '<i class="fas fa-download"></i> ' +
-                                '<span class="d-none d-md-inline">Download</span>' +
                             '</button>' +
                         '</a>' +
                     '</td>' +
@@ -244,7 +253,7 @@ $(function() {
                     {
                         "orderable": true, 
                         "searchable": true,
-                        "width": "55%"
+                        "width": "65%"
                     },
                     {
                         "orderable": false, 
@@ -254,7 +263,12 @@ $(function() {
                     {
                         "orderable": false, 
                         "searchable": false,
-                        "width": "20%"
+                        "width": "5%"
+                    },
+                    {
+                        "orderable": false, 
+                        "searchable": false,
+                        "width": "5%"
                     }
                 ]
             });

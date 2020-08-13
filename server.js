@@ -199,6 +199,7 @@ app.post('/api/admin/rename', function(request, response) {
 });
 
 app.delete('/api/admin/delete', function(request, response) {
+    //TODO: handle deleting dir
     fs.unlink(path.join(config.getConfig().dir, request.body.file), (error) => {
         if(error) {
             console.log(error);

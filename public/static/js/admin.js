@@ -226,9 +226,24 @@ $(function() {
                 $('#files tbody').append(row);
             });
 
+            $('.delete-file').click(function() {
+                $.ajax({
+                    url: '/api/admin/delete',
+                    type: 'DELETE',
+                    contentType: 'application/json',
+                    data: JSON.stringify({file: $(this).attr('id')}),
+                    success: function(response){
+                        getFiles();
+                    },
+                    error: function(xhr, status, error) {
+                        console.log("Failed to delete file: " + status + ", " + error);
+                    }
+                });                
+            });
+
             $('.dir').click(function() {
                 window.location.replace(window.location.origin + "/admin/files/" + path + $(this).text());
-            })
+            });
 
             $('.file-checkbox').change(function() {
                 $('#head-checkbox').prop('checked', true);

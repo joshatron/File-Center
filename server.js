@@ -12,6 +12,7 @@ var Busboy = require('busboy')
 var path = require('path');
 var zip = require('express-zip');
 var ip = require('ip');
+var rmdir = require('rimraf');
 
 var config = require('./server/config');
 var fileWalker = require('./server/file-walker');
@@ -199,15 +200,30 @@ app.post('/api/admin/rename', function(request, response) {
 });
 
 app.delete('/api/admin/delete', function(request, response) {
-    //TODO: handle deleting dir
-    fs.unlink(path.join(config.getConfig().dir, request.body.file), (error) => {
-        if(error) {
-            console.log(error);
-            response.status(409).send('Could not delete file.');
+    fs.stat(path.join(config.getConfig().dir, request.body.file), function (error, fileStats) {
+        if (fileStats === undefined) {
+            response.status(404).send('File ' + request.body.file + ' not found');
+        } else if (fileStats.isDirectory()) {
+            rmdir(path.join(config.getConfig().dir, request.body.file), (error) => {
+                if (error) {
+                    console.log(error);
+                    response.status(409).send('Could not delete folder.');
+                } else {
+                    response.status(200).send('Folder deleted.');
+                }
+            
+            });
         } else {
-            response.status(200).send('File deleted.');
+            fs.unlink(path.join(config.getConfig().dir, request.body.file), (error) => {
+                if(error) {
+                    console.log(error);
+                    response.status(409).send('Could not delete file.');
+                } else {
+                    response.status(200).send('File deleted.');
+                }
+            });
         }
-    })
+    });
 });
 
 app.put('/api/admin/mkdir', function(request, response) {

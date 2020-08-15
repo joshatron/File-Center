@@ -31,7 +31,7 @@ $(function() {
     let uploads = false;
     let table = null;
 
-    $.get("/api/config", function(config) {
+    $.get("/api/configAdmin", function(config) {
         banner = config.banner;
         uploads = config.uploads;
 
@@ -41,7 +41,12 @@ $(function() {
 
         displayBanner();
 
-        displayAuth();
+        if(!config.authenticated) {
+            displayAuth();
+        } else {
+            displayUploads();
+            getFiles();
+        }
     });
 
     function displayBanner() {

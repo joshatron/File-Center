@@ -48,6 +48,10 @@ exports.checkWebAuthenticated = function(request) {
            request.cookies['auth'] === webAccessToken;
 }
 
+exports.checkAdminAuthenticated = function(request) {
+    return request.cookies['auth'] === adminToken;
+}
+
 exports.updateWebAccessPassword = function(webAccessPass) {
     webAccessPassword = webAccessPass;
     webAccessToken = crypto.randomBytes(32).toString("hex");

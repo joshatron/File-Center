@@ -121,6 +121,17 @@ app.get('/api/config', function(request, response) {
     response.send(uiConfig);
 });
 
+app.get('/api/configAdmin', function(request, response) {
+    stats.addPageView(config.getConfig());
+    let uiConfig = {
+        banner: config.getConfig().banner,
+        uploads: config.getConfig().uploads,
+        darkMode: config.getConfig().darkMode,
+        authenticated: authentication.checkAdminAuthenticated(request)
+    };
+    response.send(uiConfig);
+});
+
 app.post('/api/web/upload', function(request, response, next) {
     if(config.getConfig().uploads) {
         var busboy = new Busboy({ headers: request.headers });

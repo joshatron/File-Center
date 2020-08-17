@@ -150,6 +150,7 @@ $(function() {
                             '<th><input type="checkbox" id="head-checkbox"></th>' +
                             '<th>File</th>' +
                             '<th>Size</th>' +
+                            '<th></th>' +
                             '<th>' +
                                 '<button id="download-files" class="btn btn-outline-danger float-right" style="padding-right: 0.75rem;">' +
                                     '<i class="fas fa-trash" style="padding-right: 0rem;"></i>' +
@@ -191,6 +192,7 @@ $(function() {
                         '<td>' + path + '</td>' +
                         '<td></td>' +
                         '<td></td>' +
+                        '<td></td>' +
                     '</tr>'
                 );
             }
@@ -214,6 +216,11 @@ $(function() {
                 }
                 row = row + file.name + '</td>' + 
                     '<td>' + getPrettySize(file.size) + '</td>' +
+                    '<td>' +
+                        '<button id="' + path + file.name + '" class="btn btn-outline-primary float-right edit-file">' + 
+                            '<i class="fas fa-pen"></i> ' +
+                        '</button>' +
+                    '</td>' +
                     '<td>' +
                         '<button id="' + path + file.name + '" class="btn btn-outline-danger float-right delete-file">' + 
                             '<i class="fas fa-trash"></i> ' +
@@ -273,12 +280,17 @@ $(function() {
                     {
                         "orderable": true, 
                         "searchable": true,
-                        "width": "65%"
+                        "width": "60%"
                     },
                     {
                         "orderable": false, 
                         "searchable": false,
                         "width": "20%"
+                    },
+                    {
+                        "orderable": false, 
+                        "searchable": false,
+                        "width": "5%"
                     },
                     {
                         "orderable": false, 

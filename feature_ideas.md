@@ -16,6 +16,8 @@ Below are some ideas to implement:
    * allow endpoint if authorization header with proper password
  * Stats improvements
    * Add to run middleware on every request
+ * Upload improvements
+   * If admin tries to upload, allow them even if uploading is disabled
  * Config improvements
    * If config updated that can't be hot reloaded, restart webapp if not handling other request, or at least notify user
  * File util improvements

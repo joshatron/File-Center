@@ -15,7 +15,7 @@ var ip = require('ip');
 var rmdir = require('rimraf');
 
 var config = require('./server/config');
-var fileWalker = require('./server/file-walker');
+var fileOperations = require('./server/file-operations');
 var authentication = require('./server/authentication');
 var stats = require('./server/stats');
 
@@ -25,6 +25,7 @@ if(!fs.existsSync(config.getConfig().dir)) {
     fs.mkdirSync(config.getConfig().dir);
 }
 
+fileOperations.initialize(config);
 stats.initialize(config.getConfig().statsFile);
 
 app.use(cookieParser());
@@ -104,7 +105,7 @@ var getZipFiles = function(files, done) {
 };
 
 app.get('/api/web/files', function(request, response) {
-    fileWalker.getFiles(config.getConfig().dir).then(
+    fileOperations.getFiles(config.getConfig().dir).then(
         function(value) {
             response.json(value)
         });
@@ -198,16 +199,14 @@ app.get('/api/web/downloadZip', function(request, response) {
 });
 
 app.post('/api/admin/rename', function(request, response) {
-    fs.rename(path.join(config.getConfig().dir, request.body.original), 
-              path.join(config.getConfig().dir, request.body.replacement), 
-              (error) => {
-        if(error) {
+    fileOperations.renameFile(request.body.original, request.body.replacement)
+        .then(function () {
+            response.status(200).send('File renamed.');
+        })
+        .catch(function (error) {
             console.log(error);
             response.status(409).send('Could not rename file.');
-        } else {
-            response.status(200).send('File renamed.');
-        }
-    });
+        });
 });
 
 app.delete('/api/admin/delete', function(request, response) {

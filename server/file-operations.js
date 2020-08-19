@@ -3,6 +3,12 @@
 var fs = require('fs').promises;
 var path = require('path');
 
+var config;
+
+function initialize(currentConfig) {
+    config = currentConfig;
+}
+
 async function getFiles(dir) {
     var files = [];
 
@@ -47,4 +53,12 @@ function getTotalSize(files) {
     return totalSize;
 }
 
+async function renameFile(original, replacement) {
+    await fs.rename(path.join(config.getConfig().dir, original), 
+              path.join(config.getConfig().dir, replacement), 
+    );
+}
+
+exports.initialize = initialize;
 exports.getFiles = getFiles;
+exports.renameFile = renameFile;

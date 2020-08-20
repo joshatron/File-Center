@@ -2,6 +2,7 @@
 
 var fs = require('fs').promises;
 var path = require('path');
+var rmfr = require('rmfr');
 
 var config;
 
@@ -59,6 +60,18 @@ async function renameFile(original, replacement) {
     );
 }
 
+async function deleteFile(file) {
+    let filePath = path.join(config.getConfig().dir, file);
+    let fileStats = await fs.stat(filePath);
+
+    if (fileStats.isDirectory()) {
+        await rmfr(filePath);
+    } else {
+        await fs.unlink(filePath);
+    }
+}
+
 exports.initialize = initialize;
 exports.getFiles = getFiles;
 exports.renameFile = renameFile;
+exports.deleteFile = deleteFile;

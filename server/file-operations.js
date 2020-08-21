@@ -71,7 +71,12 @@ async function deleteFile(file) {
     }
 }
 
+async function mkdir(folder) {
+    await fs.mkdir(path.join(config.getConfig().dir, folder), {recursive: true});
+}
+
 exports.initialize = initialize;
 exports.getFiles = getFiles;
 exports.renameFile = renameFile;
 exports.deleteFile = deleteFile;
+exports.mkdir = mkdir;

@@ -220,14 +220,14 @@ app.delete('/api/admin/delete', function(request, response) {
 });
 
 app.put('/api/admin/mkdir', function(request, response) {
-    fs.mkdir(path.join(config.getConfig().dir, request.body.folder), {recursive: true}, (error) => {
-        if(error) {
+    fileOperations.mkdir(request.body.folder)
+        .then(function () {
+            response.status(200).send('Folder created.');
+        })
+        .catch(function (error) {
             console.log(error);
             response.status(409).send('Could not create folder.');
-        } else {
-            response.status(200).send('Folder created.');
-        }
-    })
+        });
 });
 
 app.post('/api/admin/setConfig', function(request, response) {

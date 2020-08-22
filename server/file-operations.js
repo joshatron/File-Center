@@ -4,13 +4,21 @@ var fs = require('fs').promises;
 var path = require('path');
 var rmfr = require('rmfr');
 
-var config;
+var basePath;
 
-function initialize(currentConfig) {
-    config = currentConfig;
+function initialize(baseDir) {
+    basePath = baseDir;
 }
 
-async function getFiles(dir) {
+function updateBaseDir(baseDir) {
+    basePath = baseDir;
+}
+
+async function getFiles() {
+    return getFilesInDir(basePath);
+}
+
+async function getFilesInDir(dir) {
     var files = [];
 
     let contents = await fs.readdir(dir, {withFileTypes: true});
@@ -25,7 +33,7 @@ async function getFiles(dir) {
 
 async function getFile(dir, file) {
     if(file.isDirectory()) {
-        let contents = await getFiles(path.join(dir, file.name));
+        let contents = await getFilesInDir(path.join(dir, file.name));
 
         return {
             name: file.name, 
@@ -55,13 +63,13 @@ function getTotalSize(files) {
 }
 
 async function renameFile(original, replacement) {
-    await fs.rename(path.join(config.getConfig().dir, original), 
-              path.join(config.getConfig().dir, replacement), 
+    await fs.rename(path.join(basePath, original), 
+              path.join(basePath, replacement), 
     );
 }
 
 async function deleteFile(file) {
-    let filePath = path.join(config.getConfig().dir, file);
+    let filePath = path.join(basePath, file);
     let fileStats = await fs.stat(filePath);
 
     if (fileStats.isDirectory()) {
@@ -72,10 +80,11 @@ async function deleteFile(file) {
 }
 
 async function mkdir(folder) {
-    await fs.mkdir(path.join(config.getConfig().dir, folder), {recursive: true});
+    await fs.mkdir(path.join(basePath, folder), {recursive: true});
 }
 
 exports.initialize = initialize;
+exports.updateBaseDir = updateBaseDir;
 exports.getFiles = getFiles;
 exports.renameFile = renameFile;
 exports.deleteFile = deleteFile;

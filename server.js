@@ -24,7 +24,7 @@ if(!fs.existsSync(config.getConfig().dir)) {
     fs.mkdirSync(config.getConfig().dir);
 }
 
-fileOperations.initialize(config);
+fileOperations.initialize(config.getConfig().dir);
 stats.initialize(config.getConfig().statsFile);
 
 app.use(cookieParser());
@@ -104,9 +104,13 @@ var getZipFiles = function(files, done) {
 };
 
 app.get('/api/web/files', function(request, response) {
-    fileOperations.getFiles(config.getConfig().dir).then(
-        function(value) {
-            response.json(value)
+    fileOperations.getFiles()
+        .then(function(value) {
+            response.json(value);
+        })
+        .catch(function (error) {
+            console.log(error);
+            response.status(500).send('Could not fetch files.');
         });
 });
 

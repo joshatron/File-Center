@@ -38,22 +38,22 @@ app.use("*", function (request, response, next) {
         response.status(401).send("You are unauthorized.");
     }
 });
-app.post("/authenticate", function(request, response, next) {
+app.post("/api/authenticate/web", function(request, response, next) {
     let newCookie = authentication.getWebAccessToken(request.body.password);
 
     if(newCookie !== "") {
         response.cookie('auth', newCookie, {maxAge: 900000, httpOnly: true, sameSite: "strict"});
-        response.send("Successfully Authenticated.");
+        response.status(200).send("Successfully Authenticated.");
     } else {
         response.status(401).send("Incorrect password.");
     }
 });
-app.post("/authenticateAdmin", function(request, response, next) {
+app.post("/api/authenticate/admin", function(request, response, next) {
     let newCookie = authentication.getAdminToken(request.body.password);
 
     if(newCookie !== "") {
         response.cookie('auth', newCookie, {maxAge: 900000, httpOnly: true, sameSite: "strict"});
-        response.send("Successfully Authenticated.");
+        response.status(200).send("Successfully Authenticated.");
     } else {
         response.status(401).send("Incorrect password.");
     }
@@ -114,7 +114,7 @@ app.get('/api/web/files', function(request, response) {
         });
 });
 
-app.get('/api/config', function(request, response) {
+app.get('/api/config/web', function(request, response) {
     stats.addPageView(config.getConfig());
     let uiConfig = {
         banner: config.getConfig().banner,
@@ -125,7 +125,7 @@ app.get('/api/config', function(request, response) {
     response.send(uiConfig);
 });
 
-app.get('/api/configAdmin', function(request, response) {
+app.get('/api/config/admin', function(request, response) {
     stats.addPageView(config.getConfig());
     let uiConfig = {
         banner: config.getConfig().banner,
@@ -234,9 +234,8 @@ app.put('/api/admin/mkdir', function(request, response) {
         });
 });
 
-app.post('/api/admin/setConfig', function(request, response) {
+app.post('/api/admin/config/set', function(request, response) {
     config.overrideConfig(request.body);
-
     response.status(200).send('Config updated.');
 });
 

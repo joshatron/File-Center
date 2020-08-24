@@ -31,7 +31,7 @@ $(function() {
     let uploads = false;
     let table = null;
 
-    $.get("/api/configAdmin", function(config) {
+    $.get("/api/config/admin", function(config) {
         banner = config.banner;
         uploads = config.uploads;
 
@@ -80,7 +80,7 @@ $(function() {
 
     function submitAuth() {
         $.ajax({
-            url: '/authenticateAdmin',
+            url: '/api/authenticate/admin',
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify({password: $('#web-password').val()}),

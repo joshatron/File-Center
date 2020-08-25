@@ -19,7 +19,7 @@ async function getFiles() {
 }
 
 async function getFilesInDir(dir) {
-    var files = [];
+    let files = [];
 
     let contents = await fs.readdir(dir, {withFileTypes: true});
 
@@ -51,6 +51,26 @@ async function getFile(dir, file) {
             files: []
         };
     }
+}
+
+async function getZipFiles(files) {
+    let zipped = [];
+
+    for(let file of files) {
+        let fullPath = path.join(basePath, file);
+        let fileStats = await fs.stat(fullPath);
+
+        if(fileStats.isDirectory()) {
+            let contents = await fs.readdir(fullPath);
+            contents = contents.map((val) => path.join(file, val));
+            contents = await getZipFiles(contents);
+            zipped.push(...contents);
+        } else {
+            zipped.push({path: fullPath, name: file});
+        }
+    }
+
+    return zipped;
 }
 
 function getTotalSize(files) {
@@ -86,6 +106,7 @@ async function mkdir(folder) {
 exports.initialize = initialize;
 exports.updateBaseDir = updateBaseDir;
 exports.getFiles = getFiles;
+exports.getZipFiles = getZipFiles;
 exports.renameFile = renameFile;
 exports.deleteFile = deleteFile;
 exports.mkdir = mkdir;

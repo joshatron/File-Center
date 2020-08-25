@@ -69,40 +69,6 @@ app.use('/admin/files/*', express.static(path.join(__dirname, 'public', 'admin')
 app.use(morgan('dev'));
 app.use(methodOverride());
 
-var getZipFiles = function(files, done) {
-    var toZip = [];
-    var processed = 0;
-    files.forEach(function(file) {
-        fs.stat(path.join(config.getConfig().dir, file), function(error, fileStats) {
-            if(fileStats.isDirectory()) {
-                stats.addDownload(file + '/');
-                fs.readdir(path.join(config.getConfig().dir, file), function(error, contents) {
-                    contents = contents.map(function(result) {
-                        return path.join(file, result);
-                    });
-                    getZipFiles(contents, function(error, results) {
-                        toZip = toZip.concat(results);
-                        processed++;
-
-                        if (processed === files.length) {
-                            done(null, toZip);
-                        }
-                    })
-                })
-            }
-            else {
-                stats.addDownload(file);
-                toZip.push({path: path.join(config.getConfig().dir, file), name: file});
-                processed++;
-
-                if (processed === files.length) {
-                    done(null, toZip);
-                }
-            }
-        });
-    });
-};
-
 app.get('/api/web/files', function(request, response) {
     fileOperations.getFiles()
         .then(function(value) {
@@ -183,9 +149,14 @@ app.get('/api/web/download', function(request, response) {
         else {
             if (fileStats.isDirectory()) {
                 stats.addDownload(request.query.file + '/');
-                getZipFiles([request.query.file], function (error, results) {
-                    response.zip(results, request.query.file.split('/').pop() + '.zip');
-                });
+                fileOperations.getZipFiles([request.query.file])
+                    .then(function(results) {
+                        response.zip(results, request.query.file.split('/').pop() + '.zip');
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                        response.status(409).send('Could not retrieve files for download.');
+                    });
             }
             else {
                 stats.addDownload(request.query.file);
@@ -196,9 +167,14 @@ app.get('/api/web/download', function(request, response) {
 });
 
 app.get('/api/web/downloadZip', function(request, response) {
-    getZipFiles(JSON.parse(request.query.files), function(error, results) {
-        response.zip(results, config.getConfig().banner.replace(/ /gi, '-') + '.zip');
-    });
+    fileOperations.getZipFiles(JSON.parse(request.query.files))
+        .then(function(results) {
+            response.zip(results, config.getConfig().banner.replace(/ /gi, '-') + '.zip');
+        })
+        .catch(function (error) {
+            console.log(error);
+            response.status(409).send('Could not retrieve files for download.');
+        });
 });
 
 app.post('/api/admin/rename', function(request, response) {

@@ -14,6 +14,10 @@ function updateBaseDir(baseDir) {
     basePath = baseDir;
 }
 
+function fullPath(file) {
+    return path.join(basePath, file);
+}
+
 async function getFiles() {
     return getFilesInDir(basePath);
 }
@@ -53,26 +57,6 @@ async function getFile(dir, file) {
     }
 }
 
-async function getZipFiles(files) {
-    let zipped = [];
-
-    for(let file of files) {
-        let fullPath = path.join(basePath, file);
-        let fileStats = await fs.stat(fullPath);
-
-        if(fileStats.isDirectory()) {
-            let contents = await fs.readdir(fullPath);
-            contents = contents.map((val) => path.join(file, val));
-            contents = await getZipFiles(contents);
-            zipped.push(...contents);
-        } else {
-            zipped.push({path: fullPath, name: file});
-        }
-    }
-
-    return zipped;
-}
-
 function getTotalSize(files) {
     let totalSize = 0;
     for(let f of files) {
@@ -82,31 +66,52 @@ function getTotalSize(files) {
     return totalSize;
 }
 
+async function getZipFiles(files) {
+    let zipped = [];
+
+    for(let file of files) {
+        if(await isDirectory(file)) {
+            let contents = await fs.readdir(fullpath(file));
+            contents = contents.map((val) => path.join(file, val));
+            contents = await getZipFiles(contents);
+            zipped.push(...contents);
+        } else {
+            zipped.push({path: fullPath(file), name: file});
+        }
+    }
+
+    return zipped;
+}
+
+async function isDirectory(file) {
+    let fileStats = await fs.stat(fullPath(file));
+
+    return fileStats.isDirectory();
+}
+
 async function renameFile(original, replacement) {
-    await fs.rename(path.join(basePath, original), 
-              path.join(basePath, replacement), 
+    await fs.rename(fullPath(original), 
+              fullPath(replacement), 
     );
 }
 
 async function deleteFile(file) {
-    let filePath = path.join(basePath, file);
-    let fileStats = await fs.stat(filePath);
-
-    if (fileStats.isDirectory()) {
-        await rmfr(filePath);
+    if (await isDirectory(file)) {
+        await rmfr(fullPath(file));
     } else {
-        await fs.unlink(filePath);
+        await fs.unlink(fullpath(file));
     }
 }
 
 async function mkdir(folder) {
-    await fs.mkdir(path.join(basePath, folder), {recursive: true});
+    await fs.mkdir(fullPath(folder), {recursive: true});
 }
 
 exports.initialize = initialize;
 exports.updateBaseDir = updateBaseDir;
 exports.getFiles = getFiles;
 exports.getZipFiles = getZipFiles;
+exports.isDirectory = isDirectory;
 exports.renameFile = renameFile;
 exports.deleteFile = deleteFile;
 exports.mkdir = mkdir;

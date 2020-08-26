@@ -142,11 +142,8 @@ app.post('/api/web/upload/*', function(request, response, next) {
 });
 
 app.get('/api/web/download', function(request, response) {
-    fs.stat(path.join(config.getConfig().dir, request.query.file), function (error, fileStats) {
-        if (fileStats === undefined) {
-            response.status(404).send('File ' + request.query.file + ' not found');
-        }
-        else {
+    fileOperations.isDirectory(request.query.file)
+        .then(function(result) {
             if (fileStats.isDirectory()) {
                 stats.addDownload(request.query.file + '/');
                 fileOperations.getZipFiles([request.query.file])
@@ -162,8 +159,11 @@ app.get('/api/web/download', function(request, response) {
                 stats.addDownload(request.query.file);
                 response.download(path.join(config.getConfig().dir, request.query.file));
             }
-        }
-    });
+        })
+        .catch(function(error) {
+            console.log(error);
+            response.status(404).send('Error accessing ' + request.query.file);
+        });
 });
 
 app.get('/api/web/downloadZip', function(request, response) {

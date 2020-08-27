@@ -99,7 +99,7 @@ async function deleteFile(file) {
     if (await isDirectory(file)) {
         await rmfr(fullPath(file));
     } else {
-        await fs.unlink(fullpath(file));
+        await fs.unlink(fullPath(file));
     }
 }
 

@@ -152,7 +152,7 @@ $(function() {
                             '<th>Size</th>' +
                             '<th></th>' +
                             '<th>' +
-                                '<button id="download-files" class="btn btn-outline-danger float-right" style="padding-right: 0.75rem;">' +
+                                '<button id="delete-files" class="btn btn-outline-danger float-right" style="padding-right: 0.75rem;">' +
                                     '<i class="fas fa-trash" style="padding-right: 0rem;"></i>' +
                                 '</button>' +
                             '</th>' +
@@ -172,6 +172,25 @@ $(function() {
             $('#head-checkbox').prop('checked', false);
             $('#head-checkbox').change(function() {
                 $('.file-checkbox').prop('checked', this.checked);
+            });
+
+            $('#delete-files').click(function() {
+                $('.file-checkbox').each(function() {
+                    if(this.checked) {
+                    $.ajax({
+                        url: '/api/admin/delete',
+                        type: 'DELETE',
+                        contentType: 'application/json',
+                        data: JSON.stringify({file: path + $(this).val()}),
+                        success: function(response){
+                            getFiles();
+                        },
+                        error: function(xhr, status, error) {
+                            console.log("Failed to delete file: " + status + ", " + error);
+                        }
+                    });
+                    }
+                });
             });
 
             $('#download-files').click(function() {

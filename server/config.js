@@ -71,7 +71,7 @@ exports.initializeConfig = function(file) {
         setConfig(fs.readFileSync(configFile, 'utf8'));
     } catch(err) {
         console.log("Failed to read config file. Using defaults.");
-        fs.mkdirSync(path.dirname(configFile));
+        fs.mkdirSync(path.dirname(configFile), {recursive: true});
         fixCurrentConfig();
         saveConfig();
     }

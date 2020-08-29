@@ -94,8 +94,7 @@ app.get('/api/config/web', function(request, response) {
 app.get('/api/config/admin', function(request, response) {
     stats.addPageView(config.getConfig());
     let uiConfig = {
-        banner: config.getConfig().banner,
-        uploads: config.getConfig().uploads,
+        banner: config.getConfig().banner + " - Admin",
         darkMode: config.getConfig().darkMode,
         authenticated: authentication.checkAdminAuthenticated(request)
     };

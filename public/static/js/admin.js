@@ -28,12 +28,10 @@ $(function() {
     }
 
     let banner = "";
-    let uploads = false;
     let table = null;
 
     $.get("/api/config/admin", function(config) {
         banner = config.banner;
-        uploads = config.uploads;
 
         if(config.darkMode) {
             $('head').append('<link href="/public/css/bootstrap-dark.css" type="text/css" rel="stylesheet">');
@@ -50,7 +48,7 @@ $(function() {
     });
 
     function displayBanner() {
-        $('#banner').text(banner + " Admin");
+        $('#banner').text(banner);
     }
 
     function displayAuth() {

@@ -122,7 +122,7 @@ app.post('/api/web/upload', function(request, response, next) {
 });
 
 app.post('/api/web/upload/*', function(request, response, next) {
-    if(config.getConfig().uploads) {
+    if(config.getConfig().uploads || authentication.checkAdminAuthenticated(request)) {
         var busboy = new Busboy({ headers: request.headers });
         let folder = path.join(config.getConfig().dir, request.url.substring(16));
         busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {

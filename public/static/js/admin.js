@@ -101,29 +101,27 @@ $(function() {
     }
 
     function displayUploads() {
-        if(uploads) {
-            $('#dropzone').addClass("dropzone");
-            let url = "/api/web/upload";
-            if(path !== "") {
-                url = url + "/" + path;
-            }
-            var myDropzone = new Dropzone("#dropzone", { 
-                url: url,
-                maxFilesize: 1000000,
-                timeout: 3600000,
-                renameFile: function(file) {
-                    //console.log(path + file.name);
-                    //return path + file.name;
-                    return file.name;
-                },
-                init: function(){
-                    this.on("complete", function(file) {
-                        this.removeFile(file);
-                        getFiles();
-                    });
-                }
-            });
+        $('#dropzone').addClass("dropzone");
+        let url = "/api/web/upload";
+        if(path !== "") {
+            url = url + "/" + path;
         }
+        var myDropzone = new Dropzone("#dropzone", { 
+            url: url,
+            maxFilesize: 1000000,
+            timeout: 3600000,
+            renameFile: function(file) {
+                //console.log(path + file.name);
+                //return path + file.name;
+                return file.name;
+            },
+            init: function(){
+                this.on("complete", function(file) {
+                    this.removeFile(file);
+                    getFiles();
+                });
+            }
+        });
     }
 
     //Insert table data

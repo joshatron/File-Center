@@ -32,30 +32,26 @@ app.use(bodyParser.json())
 
 authentication.initialize(config.getConfig().webPassword, config.getConfig().adminPassword);
 app.use("*", function (request, response, next) {
-    if(authentication.checkAuthorized(request)) {
+    let path = request.baseUrl;
+    let password = authentication.passwordFromHeader(request.header("Authorization"));
+    let token = request.cookies['auth'];
+
+    if(path.startsWith('/api/admin')) {
+        if(authentication.checkAdminAuthenticated(password, token)) {
+            response.cookie('auth', authentication.getAdminToken(), {maxAge: 900000, httpOnly: true, sameSite: "strict"});
+            next();
+        } else {
+            response.status(401).send("You are unauthorized.");
+        }
+    } else if(path.startsWith('/api/web')) {
+        if(authentication.checkWebAuthenticated(password, token)) {
+            response.cookie('auth', authentication.getWebToken(), {maxAge: 900000, httpOnly: true, sameSite: "strict"});
+            next();
+        } else {
+            response.status(401).send("You are unauthorized.");
+        }
+    } else {
         next();
-    } else {
-        response.status(401).send("You are unauthorized.");
-    }
-});
-app.post("/api/authenticate/web", function(request, response, next) {
-    let newCookie = authentication.getWebAccessToken(request.body.password);
-
-    if(newCookie !== "") {
-        response.cookie('auth', newCookie, {maxAge: 900000, httpOnly: true, sameSite: "strict"});
-        response.status(200).send("Successfully Authenticated.");
-    } else {
-        response.status(401).send("Incorrect password.");
-    }
-});
-app.post("/api/authenticate/admin", function(request, response, next) {
-    let newCookie = authentication.getAdminToken(request.body.password);
-
-    if(newCookie !== "") {
-        response.cookie('auth', newCookie, {maxAge: 900000, httpOnly: true, sameSite: "strict"});
-        response.status(200).send("Successfully Authenticated.");
-    } else {
-        response.status(401).send("Incorrect password.");
     }
 });
 
@@ -69,6 +65,35 @@ app.use('/admin/files/*', express.static(path.join(__dirname, 'public', 'admin')
 app.use(morgan('dev'));
 app.use(methodOverride());
 
+app.get('/api/config/web', function(request, response) {
+    let password = authentication.passwordFromHeader(request.header("Authorization"));
+    let token = request.cookies['auth'];
+    stats.addPageView(config.getConfig());
+    let uiConfig = {
+        banner: config.getConfig().banner,
+        uploads: config.getConfig().uploads,
+        darkMode: config.getConfig().darkMode,
+        authenticated: authentication.checkWebAuthenticated(password, token)
+    };
+    response.send(uiConfig);
+});
+
+app.get('/api/config/admin', function(request, response) {
+    let password = authentication.passwordFromHeader(request.header("Authorization"));
+    let token = request.cookies['auth'];
+    stats.addPageView(config.getConfig());
+    let uiConfig = {
+        banner: config.getConfig().banner + " - Admin",
+        darkMode: config.getConfig().darkMode,
+        authenticated: authentication.checkAdminAuthenticated(password, token)
+    };
+    response.send(uiConfig);
+});
+
+app.get('/api/web/ping', function(request, response) {
+    response.status(200).send('Ping received.');
+})
+
 app.get('/api/web/files', function(request, response) {
     fileOperations.getFiles()
         .then(function(value) {
@@ -78,27 +103,6 @@ app.get('/api/web/files', function(request, response) {
             console.log(error);
             response.status(500).send('Could not fetch files.');
         });
-});
-
-app.get('/api/config/web', function(request, response) {
-    stats.addPageView(config.getConfig());
-    let uiConfig = {
-        banner: config.getConfig().banner,
-        uploads: config.getConfig().uploads,
-        darkMode: config.getConfig().darkMode,
-        authenticated: authentication.checkWebAuthenticated(request)
-    };
-    response.send(uiConfig);
-});
-
-app.get('/api/config/admin', function(request, response) {
-    stats.addPageView(config.getConfig());
-    let uiConfig = {
-        banner: config.getConfig().banner + " - Admin",
-        darkMode: config.getConfig().darkMode,
-        authenticated: authentication.checkAdminAuthenticated(request)
-    };
-    response.send(uiConfig);
 });
 
 app.post('/api/web/upload', function(request, response, next) {
@@ -175,6 +179,10 @@ app.get('/api/web/downloadZip', function(request, response) {
             response.status(409).send('Could not retrieve files for download.');
         });
 });
+
+app.get('/api/admin/ping', function(request, response) {
+    response.status(200).send('Ping received.');
+})
 
 app.post('/api/admin/rename', function(request, response) {
     fileOperations.renameFile(request.body.original, request.body.replacement)

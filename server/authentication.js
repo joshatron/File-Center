@@ -13,63 +13,6 @@ function initialize(webAccessPass, adminPass) {
     this.updateAdminPassword(adminPass);
 }
 
-function getWebAccessToken(webAccessPass) {
-    if(isWebAuthenticated(webAccessPass)) {
-        return webAccessToken;
-    }
-
-    return "";
-}
-
-function isWebAuthenticated(webPass) {
-    return webAccessPassword === webPass;
-}
-
-function getAdminToken(adminPass) {
-    if(isAdminAuthenticated(adminPass)) {
-        return adminToken;
-    }
-
-    return "";
-}
-
-function isAdminAuthenticated(adminPass) {
-    return adminPassword === adminPass;
-}
-
-function checkAuthorized(request) {
-    let path = request.baseUrl;
-    let password = request.header("Authorization");
-    if(password === undefined) {
-        password = "";
-    } else {
-        password = password.split(" ")[1];
-        password = Buffer.from(password, 'base64').toString('utf8');
-        password = password.split(":")[1];
-    }
-
-    if(path.startsWith('/api/web') && webAccessPassword !== '') {
-        return request.cookies['auth'] === adminToken || 
-               request.cookies['auth'] === webAccessToken ||
-               isWebAuthenticated(password) || isAdminAuthenticated(password);
-    } else if(path.startsWith('/api/admin')) {
-        return adminPassword !== "" && 
-        (request.cookies['auth'] === adminToken || isAdminAuthenticated(password));
-    }
-
-    return true;
-}
-
-function checkWebAuthenticated(request) {
-    return webAccessPassword === "" ||
-           request.cookies['auth'] === adminToken || 
-           request.cookies['auth'] === webAccessToken;
-}
-
-function checkAdminAuthenticated(request) {
-    return request.cookies['auth'] === adminToken;
-}
-
 function updateWebAccessPassword(webAccessPass) {
     webAccessPassword = webAccessPass;
     webAccessToken = crypto.randomBytes(32).toString("hex");
@@ -80,11 +23,42 @@ function updateAdminPassword(adminPass) {
     adminToken = crypto.randomBytes(32).toString("hex");
 }
 
+function passwordFromHeader(authHeader) {
+    if(authHeader !== undefined) {
+        let password = authHeader.split(" ")[1];
+        password = Buffer.from(password, 'base64').toString('utf8');
+        password = password.split(":")[1];
+
+        return password;
+    } else {
+        return "";
+    }
+}
+
+function checkWebAuthenticated(password, token) {
+    return token === webAccessToken || token === adminToken ||
+           password === webAccessPassword || password === adminPassword ||
+           webAccessPassword === '';
+}
+
+function checkAdminAuthenticated(password, token) {
+    return adminPassword !== '' && 
+           (token === adminToken || password === adminPassword);
+}
+
+function getWebToken() {
+    return webAccessToken;
+}
+
+function getAdminToken() {
+    return adminToken;
+}
+
 exports.initialize = initialize;
-exports.getWebAccessToken = getWebAccessToken;
-exports.getAdminToken = getAdminToken;
-exports.checkAuthorized = checkAuthorized;
-exports.checkWebAuthenticated = checkWebAuthenticated;
-exports.checkAdminAuthenticated = checkAdminAuthenticated;
 exports.updateWebAccessPassword = updateWebAccessPassword;
 exports.updateAdminPassword = updateAdminPassword;
+exports.passwordFromHeader = passwordFromHeader;
+exports.checkWebAuthenticated = checkWebAuthenticated;
+exports.checkAdminAuthenticated = checkAdminAuthenticated;
+exports.getWebToken = getWebToken;
+exports.getAdminToken = getAdminToken;

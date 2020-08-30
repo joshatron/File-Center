@@ -80,10 +80,10 @@ $(function() {
 
     function submitAuth() {
         $.ajax({
-            url: '/api/authenticate/web',
-            type: 'POST',
+            url: '/api/admin/ping',
+            type: 'GET',
             contentType: 'application/json',
-            data: JSON.stringify({password: $('#web-password').val()}),
+            headers: {"Authorization": "Basic " + btoa(":" + $('#web-password').val())},
             success: function(response){
                 hideAuth();
                 displayUploads();

@@ -71,7 +71,7 @@ async function getZipFiles(files) {
 
     for(let file of files) {
         if(await isDirectory(file)) {
-            let contents = await fs.readdir(fullpath(file));
+            let contents = await fs.readdir(fullPath(file));
             contents = contents.map((val) => path.join(file, val));
             contents = await getZipFiles(contents);
             zipped.push(...contents);

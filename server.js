@@ -146,8 +146,8 @@ app.post('/api/web/upload/*', function(request, response, next) {
 
 app.get('/api/web/download', function(request, response) {
     fileOperations.isDirectory(request.query.file)
-        .then(function(result) {
-            if (fileStats.isDirectory()) {
+        .then(function(isDirectory) {
+            if (isDirectory) {
                 stats.addDownload(request.query.file + '/');
                 fileOperations.getZipFiles([request.query.file])
                     .then(function(results) {

@@ -45,7 +45,9 @@ app.use("*", function (request, response, next) {
         }
     } else if(path.startsWith('/api/web')) {
         if(authentication.checkWebAuthenticated(password, token)) {
-            response.cookie('auth', authentication.getWebToken(), {maxAge: 900000, httpOnly: true, sameSite: "strict"});
+            if(!authentication.checkAdminAuthenticated(password, token)) {
+                response.cookie('auth', authentication.getWebToken(), {maxAge: 900000, httpOnly: true, sameSite: "strict"});
+            }
             next();
         } else {
             response.status(401).send("You are unauthorized.");
@@ -106,7 +108,10 @@ app.get('/api/web/files', function(request, response) {
 });
 
 app.post('/api/web/upload', function(request, response, next) {
-    if(config.getConfig().uploads) {
+    let password = authentication.passwordFromHeader(request.header("Authorization"));
+    let token = request.cookies['auth'];
+
+    if(config.getConfig().uploads || authentication.checkAdminAuthenticated(password, token)) {
         var busboy = new Busboy({ headers: request.headers });
         busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
             var saveTo = path.join(config.getConfig().dir, filename);
@@ -125,7 +130,10 @@ app.post('/api/web/upload', function(request, response, next) {
 });
 
 app.post('/api/web/upload/*', function(request, response, next) {
-    if(config.getConfig().uploads || authentication.checkAdminAuthenticated(request)) {
+    let password = authentication.passwordFromHeader(request.header("Authorization"));
+    let token = request.cookies['auth'];
+
+    if(config.getConfig().uploads || authentication.checkAdminAuthenticated(password, token)) {
         var busboy = new Busboy({ headers: request.headers });
         let folder = path.join(config.getConfig().dir, request.url.substring(16));
         busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {

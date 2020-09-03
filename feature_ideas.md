@@ -9,20 +9,16 @@ Below are some ideas to implement:
      * Add uploading cert files for https
    * Add viewing stats
    * Add creating directory
-   * Add disabling admin enpoints if no admin password set
    * Add control to restart server possibly
  * Authentication improvements
    * Make more clean and easy to understand
-   * allow endpoint if authorization header with proper password
  * Stats improvements
    * Add to run middleware on every request
- * Upload improvements
-   * If admin tries to upload, allow them even if uploading is disabled
  * Config improvements
    * If config updated that can't be hot reloaded, restart webapp if not handling other request, or at least notify user
  * File util improvements
-   * File zip should be rewritten with async await in file walker file
-   * Other file utilities should be moved to separate file
+   * Merge download and downloadZip endpoints
+   * Move upload to another file
  * Server improvements
    * Need to restructure server file to have much less logic in it
  * UI improvements

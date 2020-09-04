@@ -17,8 +17,7 @@ Below are some ideas to implement:
  * Config improvements
    * If config updated that can't be hot reloaded, restart webapp if not handling other request, or at least notify user
  * File util improvements
-   * Simplify download endpoint
-   * Move upload code to another file
+   * Move upload code to another file/function
  * Server improvements
    * Need to restructure server file to have much less logic in it
  * UI improvements

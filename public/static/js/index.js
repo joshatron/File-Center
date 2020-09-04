@@ -176,7 +176,7 @@ $(function() {
                         toDownload.push(path + $(this).val());
                     }
                 });
-                window.open('/api/web/downloadZip?files=' + JSON.stringify(toDownload), '_blank');
+                window.open('/api/web/download?files=' + btoa(JSON.stringify(toDownload)), '_blank');
             });
 
             if(path !== "") {
@@ -210,7 +210,7 @@ $(function() {
                 row = row + file.name + '</td>' + 
                     '<td>' + getPrettySize(file.size) + '</td>' +
                     '<td>' +
-                        '<a href="/api/web/download?file=' + path + file.name + '" download>' +
+                        '<a href="/api/web/download?files=' + btoa(JSON.stringify([path + file.name])) + '" download>' +
                             '<button class="btn btn-outline-primary float-right">' + 
                                 '<i class="fas fa-download"></i> ' +
                                 '<span class="d-none d-md-inline">Download</span>' +

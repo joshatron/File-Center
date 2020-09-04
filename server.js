@@ -153,39 +153,44 @@ app.post('/api/web/upload/*', function(request, response, next) {
 });
 
 app.get('/api/web/download', function(request, response) {
-    fileOperations.isDirectory(request.query.file)
-        .then(function(isDirectory) {
-            if (isDirectory) {
-                stats.addDownload(request.query.file + '/');
-                fileOperations.getZipFiles([request.query.file])
-                    .then(function(results) {
-                        response.zip(results, request.query.file.split('/').pop() + '.zip');
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                        response.status(409).send('Could not retrieve files for download.');
-                    });
-            }
-            else {
-                stats.addDownload(request.query.file);
-                response.download(path.join(config.getConfig().dir, request.query.file));
-            }
-        })
-        .catch(function(error) {
-            console.log(error);
-            response.status(404).send('Error accessing ' + request.query.file);
-        });
-});
+    let files = Buffer.from(request.query.files, 'base64').toString('utf8');
+    files = JSON.parse(files);
 
-app.get('/api/web/downloadZip', function(request, response) {
-    fileOperations.getZipFiles(JSON.parse(request.query.files))
-        .then(function(results) {
-            response.zip(results, config.getConfig().banner.replace(/ /gi, '-') + '.zip');
-        })
-        .catch(function (error) {
-            console.log(error);
-            response.status(409).send('Could not retrieve files for download.');
-        });
+    if(files === undefined || files.length === 0) {
+        response.status(400).send('Illegal file list.');
+    } else if(files.length === 1) {
+        fileOperations.isDirectory(files[0])
+            .then(function(isDirectory) {
+                if (isDirectory) {
+                    stats.addDownload(files[0] + '/');
+                    fileOperations.getZipFiles(files)
+                        .then(function(results) {
+                            response.zip(results, files[0].split('/').pop() + '.zip');
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                            response.status(409).send('Could not retrieve files for download.');
+                        });
+                }
+                else {
+                    stats.addDownload(files[0]);
+                    response.download(path.join(config.getConfig().dir, files[0]));
+                }
+            })
+            .catch(function(error) {
+                console.log(error);
+                response.status(404).send('Error accessing ' + files[0]);
+            });
+    } else {
+        fileOperations.getZipFiles(files)
+            .then(function(results) {
+                response.zip(results, config.getConfig().banner.replace(/ /gi, '-') + '.zip');
+            })
+            .catch(function (error) {
+                console.log(error);
+                response.status(409).send('Could not retrieve files for download.');
+            });
+    }
 });
 
 app.get('/api/admin/ping', function(request, response) {

@@ -23,15 +23,22 @@ function updateAdminPassword(adminPass) {
     adminToken = crypto.randomBytes(32).toString("hex");
 }
 
-function passwordFromHeader(authHeader) {
-    if(authHeader !== undefined) {
-        let password = authHeader.split(" ")[1];
-        password = Buffer.from(password, 'base64').toString('utf8');
-        password = password.split(":")[1];
+function usernameFromHeader(authHeader) {
+    return decodedAuthHeader(authHeader).split(":")[1];
+}
 
-        return password;
+function passwordFromHeader(authHeader) {
+    return decodedAuthHeader(authHeader).split(":")[1];
+}
+
+function decodedAuthHeader(authHeader) {
+    if(authHeader !== undefined) {
+        let decoded = authHeader.split(" ")[1];
+        decoded = Buffer.from(password, 'base64').toString('utf8');
+
+        return decoded;
     } else {
-        return "";
+        return ":";
     }
 }
 
@@ -57,6 +64,7 @@ function getAdminToken() {
 exports.initialize = initialize;
 exports.updateWebAccessPassword = updateWebAccessPassword;
 exports.updateAdminPassword = updateAdminPassword;
+exports.usernameFromHeader = usernameFromHeader;
 exports.passwordFromHeader = passwordFromHeader;
 exports.checkWebAuthenticated = checkWebAuthenticated;
 exports.checkAdminAuthenticated = checkAdminAuthenticated;

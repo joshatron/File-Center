@@ -83,7 +83,6 @@ app.get('/api/config/web', function(request, response) {
 app.get('/api/config/admin', function(request, response) {
     let password = authentication.passwordFromHeader(request.header("Authorization"));
     let token = request.cookies['auth'];
-    stats.addPageView(config.getConfig());
     let uiConfig = {
         banner: config.getConfig().banner + " - Admin",
         darkMode: config.getConfig().darkMode,
@@ -166,12 +165,13 @@ app.get('/api/web/download', async function(request, response) {
                 let zipFiles = await fileOperations.getZipFiles(files);
                 response.zip(zipFiles, file.split('/').pop() + '.zip');
             } else {
-                stats.addDownload(file);
                 response.download(path.join(config.getConfig().dir, file));
             }
+            stats.addDownload(file);
         } else {
             let zipFiles = await fileOperations.getZipFiles(files);
             response.zip(zipFiles, config.getConfig().banner.replace(/ /gi, '-') + '.zip');
+            files.forEach(f => stats.addDownload(f));
         }
     } catch(error) {
         console.log(error);

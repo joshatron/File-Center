@@ -107,28 +107,13 @@ app.get('/api/web/files', function(request, response) {
 });
 
 app.post('/api/web/upload', function(request, response, next) {
-    let password = authentication.passwordFromHeader(request.header("Authorization"));
-    let token = request.cookies['auth'];
-
-    if(config.getConfig().uploads || authentication.checkAdminAuthenticated(password, token)) {
-        var busboy = new Busboy({ headers: request.headers });
-        busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
-            var saveTo = path.join(config.getConfig().dir, filename);
-            file.pipe(fs.createWriteStream(saveTo));
-        });
-
-        busboy.on('finish', function() {
-            response.writeHead(200, { 'Connection': 'close' });
-            response.end("That's all folks!");
-        });
-    
-        return request.pipe(busboy);
-    } else {
-        response.status(405).send('Uploading is not currently allowed.');
-    }
+    handleUpload(request, response);
+});
+app.post('/api/web/upload/*', function(request, response, next) {
+    handleUpload(request, response);
 });
 
-app.post('/api/web/upload/*', function(request, response, next) {
+function handleUpload(request, response) {
     let password = authentication.passwordFromHeader(request.header("Authorization"));
     let token = request.cookies['auth'];
 
@@ -149,7 +134,7 @@ app.post('/api/web/upload/*', function(request, response, next) {
     } else {
         response.status(405).send('Uploading is not currently allowed.');
     }
-});
+}
 
 app.get('/api/web/download', async function(request, response) {
     try {

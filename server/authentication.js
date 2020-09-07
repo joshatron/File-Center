@@ -24,7 +24,7 @@ function updateAdminPassword(adminPass) {
 }
 
 function usernameFromHeader(authHeader) {
-    return decodedAuthHeader(authHeader).split(":")[1];
+    return decodedAuthHeader(authHeader).split(":")[0];
 }
 
 function passwordFromHeader(authHeader) {
@@ -34,7 +34,7 @@ function passwordFromHeader(authHeader) {
 function decodedAuthHeader(authHeader) {
     if(authHeader !== undefined) {
         let decoded = authHeader.split(" ")[1];
-        decoded = Buffer.from(password, 'base64').toString('utf8');
+        decoded = Buffer.from(decoded, 'base64').toString('utf8');
 
         return decoded;
     } else {

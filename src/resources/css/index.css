@@ -11,3 +11,15 @@ table.dataTable tbody td {
     word-break: break-word;
     vertical-align: top;
 }
+
+.upload-only {
+    height: 40vh;
+    margin-top: 20vh;
+}
+
+.upload-only .dz-message {
+    display: flex;
+    justify-content: center;
+    height: 100%;
+    margin: auto;
+}

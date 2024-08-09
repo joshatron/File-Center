@@ -18,7 +18,7 @@ var fileOperations = require('./server/file-operations');
 var authentication = require('./server/authentication');
 var stats = require('./server/stats');
 
-config.initializeConfig(path.join(__dirname, 'config', 'config.json'));
+config.initializeConfig(path.join(__dirname, '..', 'config', 'config.json'));
 
 if(!fs.existsSync(config.getConfig().dir)) {
     fs.mkdirSync(config.getConfig().dir);
@@ -57,13 +57,13 @@ app.use("*", function (request, response, next) {
     }
 });
 
-app.use('/public', express.static(path.join(__dirname, 'public', 'static')));
-app.use('/', express.static(path.join(__dirname, 'public', 'html')));
-app.use('/files', express.static(path.join(__dirname, 'public', 'html')));
-app.use('/files/*', express.static(path.join(__dirname, 'public', 'html')));
-app.use('/admin', express.static(path.join(__dirname, 'public', 'admin')));
-app.use('/admin/files', express.static(path.join(__dirname, 'public', 'admin')));
-app.use('/admin/files/*', express.static(path.join(__dirname, 'public', 'admin')));
+app.use('/resources', express.static(path.join(__dirname, 'resources')));
+app.use('/', express.static(path.join(__dirname, 'resources', 'html')));
+app.use('/files', express.static(path.join(__dirname, 'resources', 'html')));
+app.use('/files/*', express.static(path.join(__dirname, 'resources', 'html')));
+app.use('/admin', express.static(path.join(__dirname, 'resources', 'html', 'admin')));
+app.use('/admin/files', express.static(path.join(__dirname, 'resources', 'html', 'admin')));
+app.use('/admin/files/*', express.static(path.join(__dirname, 'resources', 'html', 'admin')));
 app.use(morgan('dev'));
 app.use(methodOverride());
 
@@ -74,10 +74,20 @@ app.get('/api/config/web', function(request, response) {
     let uiConfig = {
         banner: config.getConfig().banner,
         uploads: config.getConfig().uploads,
+        downloads: config.getConfig().downloads,
         darkMode: config.getConfig().darkMode,
         authenticated: authentication.checkWebAuthenticated(password, token)
     };
     response.send(uiConfig);
+});
+
+app.get('/api/config/custom.css', function(request, response) {
+    response.setHeader('Content-Type', 'text/css');
+    if(config.getConfig().customCssFile !== undefined && config.getConfig().customCssFile !== null) {
+        response.send(fs.readFileSync(config.getConfig().customCssFile, 'utf8'));
+    } else {
+        response.send("");
+    }
 });
 
 app.get('/api/config/admin', function(request, response) {

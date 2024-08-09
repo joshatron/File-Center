@@ -13,6 +13,9 @@ function fixCurrentConfig() {
     if(currentConfig.banner === undefined) {
         currentConfig.banner = "File Center";
     }
+    if(currentConfig.customCssFile === undefined) {
+        currentConfig.customCssFile = null;
+    }
     if(currentConfig.port === undefined) {
         currentConfig.port = 8080;
     }
@@ -22,6 +25,9 @@ function fixCurrentConfig() {
     if(currentConfig.uploads === undefined) {
         currentConfig.uploads = true;
     }
+    if(currentConfig.downloads === undefined) {
+        currentConfig.downloads = true;
+    }
     if(currentConfig.https === undefined) {
         currentConfig.https = false;
     }
@@ -30,8 +36,7 @@ function fixCurrentConfig() {
             currentConfig.httpsCert = path.join(__dirname, '..', 'config', 'cert.pem');
         }
         if(currentConfig.httpsKey === undefined) {
-            currentConfig.httpsKey = path.join(__dirname, '..', 'config', 'key.pem');
-        }
+            currentConfig.httpsKey = path.join(__dirname, '..', 'config', 'key.pem'); }
     }
     if(currentConfig.statsFile === undefined) {
         currentConfig.statsFile = path.join(__dirname, '..', 'config', 'stats.json');

@@ -3,7 +3,6 @@
 var https = require('https');
 var express = require('express');
 var session = require('express-session');
-var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser')
 var app = express();
 var morgan = require('morgan');
@@ -12,6 +11,7 @@ var fs = require('fs');
 var Busboy = require('busboy')
 var path = require('path');
 var ip = require('ip');
+const crypto = require("crypto");
 
 // Initialize everything
 var config = require('./server/config');
@@ -29,14 +29,13 @@ fileOperations.initialize(config.getConfig().dir);
 authentication.initialize(config.getConfig().webPassword, config.getConfig().adminPassword);
 stats.initialize(config.getConfig().statsFile);
 
-app.use(cookieParser());
 app.use(bodyParser.json())
 app.use(morgan('dev'));
 app.use(methodOverride());
 app.use(session({
-    secret: 'secret-key',
+    secret: crypto.randomBytes(32).toString("hex"),
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: false
 }))
 
 // Static resources
@@ -50,6 +49,8 @@ app.use('/admin/files/*', express.static(path.join(__dirname, 'resources', 'html
 
 // Authenticate endpoints
 app.use("*", function (request, response, next) {
+    authentication.updateWebAccessPassword(config.getConfig().webPassword);
+    authentication.updateAdminPassword(config.getConfig().adminPassword);
     let path = request.baseUrl;
 
     if (path === '/api/web/files' || path === '/api/web/download') {

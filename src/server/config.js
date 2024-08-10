@@ -92,8 +92,6 @@ exports.initializeConfig = function(file) {
                 } else {
                     setConfig(fs.readFileSync(configFile, 'utf8'));
 
-                    // stats.updateStatsFile(config.statsFile);
-                    // authentication.updateWebAccessPassword(config.webPassword);
                     if(!fs.existsSync(currentConfig.dir)) {
                         fs.mkdirSync(currentConfig.dir);
                     }

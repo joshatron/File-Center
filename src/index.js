@@ -2,6 +2,7 @@
 
 var https = require('https');
 var express = require('express');
+var session = require('express-session');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser')
 var app = express();
@@ -10,9 +11,9 @@ var methodOverride = require('method-override');
 var fs = require('fs');
 var Busboy = require('busboy')
 var path = require('path');
-var zip = require('express-zip');
 var ip = require('ip');
 
+// Initialize everything
 var config = require('./server/config');
 var fileOperations = require('./server/file-operations');
 var authentication = require('./server/authentication');
@@ -25,29 +26,46 @@ if(!fs.existsSync(config.getConfig().dir)) {
 }
 
 fileOperations.initialize(config.getConfig().dir);
+authentication.initialize(config.getConfig().webPassword, config.getConfig().adminPassword);
 stats.initialize(config.getConfig().statsFile);
 
 app.use(cookieParser());
 app.use(bodyParser.json())
+app.use(morgan('dev'));
+app.use(methodOverride());
+app.use(session({
+    secret: 'secret-key',
+    resave: false,
+    saveUninitialized: true
+}))
 
-authentication.initialize(config.getConfig().webPassword, config.getConfig().adminPassword);
+// Static resources
+app.use('/resources', express.static(path.join(__dirname, 'resources')));
+app.use('/', express.static(path.join(__dirname, 'resources', 'html')));
+app.use('/files', express.static(path.join(__dirname, 'resources', 'html')));
+app.use('/files/*', express.static(path.join(__dirname, 'resources', 'html')));
+app.use('/admin', express.static(path.join(__dirname, 'resources', 'html', 'admin')));
+app.use('/admin/files', express.static(path.join(__dirname, 'resources', 'html', 'admin')));
+app.use('/admin/files/*', express.static(path.join(__dirname, 'resources', 'html', 'admin')));
+
+// Authenticate endpoints
 app.use("*", function (request, response, next) {
     let path = request.baseUrl;
-    let password = authentication.passwordFromHeader(request.header("Authorization"));
-    let token = request.cookies['auth'];
 
-    if(path.startsWith('/api/admin')) {
-        if(authentication.checkAdminAuthenticated(password, token)) {
-            response.cookie('auth', authentication.getAdminToken(), {maxAge: 900000, httpOnly: true, sameSite: "strict"});
+    if (path === '/api/web/files' || path === '/api/web/download') {
+        if((config.getConfig().downloads && authentication.checkWebAuthenticated(request)) || authentication.checkAdminAuthenticated(request)) {
             next();
         } else {
             response.status(401).send("You are unauthorized.");
         }
-    } else if(path.startsWith('/api/web')) {
-        if(authentication.checkWebAuthenticated(password, token)) {
-            if(!authentication.checkAdminAuthenticated(password, token)) {
-                response.cookie('auth', authentication.getWebToken(), {maxAge: 900000, httpOnly: true, sameSite: "strict"});
-            }
+    } else if (path.startsWith('/api/web/upload')) {
+        if((config.getConfig().uploads && authentication.checkWebAuthenticated(request)) || authentication.checkAdminAuthenticated(password, token)) {
+            next();
+        } else {
+            response.status(401).send("You are unauthorized.");
+        }
+    } else if(path.startsWith('/api/admin')) {
+        if(authentication.checkAdminAuthenticated(request)) {
             next();
         } else {
             response.status(401).send("You are unauthorized.");
@@ -57,33 +75,22 @@ app.use("*", function (request, response, next) {
     }
 });
 
-app.use('/resources', express.static(path.join(__dirname, 'resources')));
-app.use('/', express.static(path.join(__dirname, 'resources', 'html')));
-app.use('/files', express.static(path.join(__dirname, 'resources', 'html')));
-app.use('/files/*', express.static(path.join(__dirname, 'resources', 'html')));
-app.use('/admin', express.static(path.join(__dirname, 'resources', 'html', 'admin')));
-app.use('/admin/files', express.static(path.join(__dirname, 'resources', 'html', 'admin')));
-app.use('/admin/files/*', express.static(path.join(__dirname, 'resources', 'html', 'admin')));
-app.use(morgan('dev'));
-app.use(methodOverride());
-
+// API enpoints
 app.get('/api/config/web', function(request, response) {
-    let password = authentication.passwordFromHeader(request.header("Authorization"));
-    let token = request.cookies['auth'];
     stats.addPageView(config.getConfig());
     let uiConfig = {
         banner: config.getConfig().banner,
         uploads: config.getConfig().uploads,
         downloads: config.getConfig().downloads,
         darkMode: config.getConfig().darkMode,
-        authenticated: authentication.checkWebAuthenticated(password, token)
+        authenticated: authentication.checkWebAuthenticated(request)
     };
     response.send(uiConfig);
 });
 
 app.get('/api/config/custom.css', function(request, response) {
     response.setHeader('Content-Type', 'text/css');
-    if(config.getConfig().customCssFile !== undefined && config.getConfig().customCssFile !== null) {
+    if(config.getConfig().customCssFile !== undefined && config.getConfig().customCssFile !== null && config.getConfig.customCssFile !== '') {
         response.send(fs.readFileSync(config.getConfig().customCssFile, 'utf8'));
     } else {
         response.send("");
@@ -91,21 +98,53 @@ app.get('/api/config/custom.css', function(request, response) {
 });
 
 app.get('/api/config/admin', function(request, response) {
-    let password = authentication.passwordFromHeader(request.header("Authorization"));
-    let token = request.cookies['auth'];
     let uiConfig = {
         banner: config.getConfig().banner + " - Admin",
         darkMode: config.getConfig().darkMode,
-        authenticated: authentication.checkAdminAuthenticated(password, token)
+        authenticated: authentication.checkAdminAuthenticated(request)
     };
     response.send(uiConfig);
 });
 
-app.get('/api/web/ping', function(request, response) {
-    response.status(200).send('Ping received.');
-})
+app.get('/api/login/web', function(request, response) {
+    if(authentication.checkWebAuthenticated(request)) {
+        request.session.regenerate(function(error) {
+            if (error) {
+                response.status(401).send("Failed to log in.");
+            }
+            request.session.user = "web";
+            request.session.save(function(error) {
+                if (error) {
+                    response.status(401).send("Failed to log in.");
+                }
+                response.status(204).send();
+            })
+        })
+    } else {
+        response.status(401).send("Failed to log in.");
+    }
+});
 
-app.get('/api/web/files', function(request, response) {
+app.get('/api/login/admin', function(request, response) {
+    if(authentication.checkAdminAuthenticated(request)) {
+        request.session.regenerate(function(error) {
+            if (error) {
+                response.status(401).send("Failed to log in.");
+            }
+            request.session.user = "admin";
+            request.session.save(function(error) {
+                if (error) {
+                    response.status(401).send("Failed to log in.");
+                }
+                response.status(204).send();
+            })
+        })
+    } else {
+        response.status(401).send("Failed to log in.");
+    }
+});
+
+app.get('/api/web/files', function(_request, response) {
     fileOperations.getFiles()
         .then(function(value) {
             response.json(value);
@@ -116,34 +155,27 @@ app.get('/api/web/files', function(request, response) {
         });
 });
 
-app.post('/api/web/upload', function(request, response, next) {
+app.post('/api/web/upload', function(request, response) {
     handleUpload(request, response);
 });
-app.post('/api/web/upload/*', function(request, response, next) {
+app.post('/api/web/upload/*', function(request, response) {
     handleUpload(request, response);
 });
 
 function handleUpload(request, response) {
-    let password = authentication.passwordFromHeader(request.header("Authorization"));
-    let token = request.cookies['auth'];
+    var busboy = new Busboy({ headers: request.headers });
+    let folder = path.join(config.getConfig().dir, request.url.substring(16));
+    busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
+        var saveTo = path.join(folder, filename);
+        file.pipe(fs.createWriteStream(saveTo));
+    });
 
-    if(config.getConfig().uploads || authentication.checkAdminAuthenticated(password, token)) {
-        var busboy = new Busboy({ headers: request.headers });
-        let folder = path.join(config.getConfig().dir, request.url.substring(16));
-        busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
-            var saveTo = path.join(folder, filename);
-            file.pipe(fs.createWriteStream(saveTo));
-        });
+    busboy.on('finish', function() {
+        response.writeHead(200, { 'Connection': 'close' });
+        response.end("That's all folks!");
+    });
 
-        busboy.on('finish', function() {
-            response.writeHead(200, { 'Connection': 'close' });
-            response.end("That's all folks!");
-        });
-    
-        return request.pipe(busboy);
-    } else {
-        response.status(405).send('Uploading is not currently allowed.');
-    }
+    return request.pipe(busboy);
 }
 
 app.get('/api/web/download', async function(request, response) {
@@ -173,10 +205,6 @@ app.get('/api/web/download', async function(request, response) {
         response.status(409).send('The requested files are inaccessible');
     }
 });
-
-app.get('/api/admin/ping', function(request, response) {
-    response.status(200).send('Ping received.');
-})
 
 app.post('/api/admin/rename', function(request, response) {
     fileOperations.renameFile(request.body.original, request.body.replacement)
@@ -220,6 +248,7 @@ app.get('/api/admin/config', function(request, response) {
     response.status(200).send(config.getConfig());
 });
 
+// Start application
 if(config.getConfig().https) {
     let credentials = {
         cert: fs.readFileSync(config.getConfig().httpsCert, 'utf8'),

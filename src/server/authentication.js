@@ -1,12 +1,7 @@
 'use strict';
 
-const crypto = require("crypto");
-
 var webAccessPassword;
-var webAccessToken;
-
 var adminPassword;
-var adminToken;
 
 function initialize(webAccessPass, adminPass) {
     this.updateWebAccessPassword(webAccessPass);
@@ -15,12 +10,10 @@ function initialize(webAccessPass, adminPass) {
 
 function updateWebAccessPassword(webAccessPass) {
     webAccessPassword = webAccessPass;
-    webAccessToken = crypto.randomBytes(32).toString("hex");
 }
 
 function updateAdminPassword(adminPass) {
     adminPassword = adminPass;
-    adminToken = crypto.randomBytes(32).toString("hex");
 }
 
 function usernameFromHeader(authHeader) {
@@ -42,24 +35,18 @@ function decodedAuthHeader(authHeader) {
     }
 }
 
-function checkWebAuthenticated(password, token) {
-    return token === webAccessToken || token === adminToken ||
-           password === webAccessPassword || password === adminPassword ||
+function checkWebAuthenticated(request) {
+    let password = passwordFromHeader(request.header("Authorization"));
+    return request.session.user === 'web' || request.session.user === 'admin' ||
+           password === webAccessPassword || (adminPassword !== '' && password === adminPassword) ||
            webAccessPassword === '';
 }
 
-function checkAdminAuthenticated(password, token) {
-    return adminPassword !== '' && 
-           (token === adminToken || password === adminPassword);
+function checkAdminAuthenticated(request) {
+    let password = passwordFromHeader(request.header("Authorization"));
+    return adminPassword !== '' && (request.session.user === 'admin' || password === adminPassword);
 }
 
-function getWebToken() {
-    return webAccessToken;
-}
-
-function getAdminToken() {
-    return adminToken;
-}
 
 exports.initialize = initialize;
 exports.updateWebAccessPassword = updateWebAccessPassword;
@@ -68,5 +55,3 @@ exports.usernameFromHeader = usernameFromHeader;
 exports.passwordFromHeader = passwordFromHeader;
 exports.checkWebAuthenticated = checkWebAuthenticated;
 exports.checkAdminAuthenticated = checkAdminAuthenticated;
-exports.getWebToken = getWebToken;
-exports.getAdminToken = getAdminToken;

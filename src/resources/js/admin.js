@@ -78,7 +78,7 @@ $(function() {
 
     function submitAuth() {
         $.ajax({
-            url: '/api/admin/ping',
+            url: '/api/login/admin',
             type: 'GET',
             contentType: 'application/json',
             headers: {"Authorization": "Basic " + btoa(":" + $('#web-password').val())},

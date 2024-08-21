@@ -14,13 +14,13 @@ function fixCurrentConfig() {
         currentConfig.banner = "File Center";
     }
     if(currentConfig.customCssFile === undefined) {
-        currentConfig.customCssFile = null;
+        currentConfig.customCssFile = "";
     }
     if(currentConfig.port === undefined) {
         currentConfig.port = 8080;
     }
     if(currentConfig.dir === undefined) {
-        currentConfig.dir = path.join(__dirname, '..', 'files');
+        currentConfig.dir = path.join(__dirname, '..', '..', 'files');
     }
     if(currentConfig.uploads === undefined) {
         currentConfig.uploads = true;
@@ -33,13 +33,13 @@ function fixCurrentConfig() {
     }
     if(currentConfig.https) {
         if(currentConfig.httpsCert === undefined) {
-            currentConfig.httpsCert = path.join(__dirname, '..', 'config', 'cert.pem');
+            currentConfig.httpsCert = path.join(__dirname, '..', '..', 'config', 'cert.pem');
         }
         if(currentConfig.httpsKey === undefined) {
-            currentConfig.httpsKey = path.join(__dirname, '..', 'config', 'key.pem'); }
+            currentConfig.httpsKey = path.join(__dirname, '..', '..', 'config', 'key.pem'); }
     }
     if(currentConfig.statsFile === undefined) {
-        currentConfig.statsFile = path.join(__dirname, '..', 'config', 'stats.json');
+        currentConfig.statsFile = path.join(__dirname, '..', '..', 'config', 'stats.json');
     }
     if(currentConfig.webPassword === undefined) {
         currentConfig.webPassword = "";

@@ -4,4 +4,7 @@ set -e
 
 command -v npm >/dev/null 2>&1 || { echo >&2 "NPM is required for setup. Aborting."; exit 1; }
 
+# Go to script source dir
+cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 npm start

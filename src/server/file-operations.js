@@ -107,6 +107,26 @@ async function mkdir(folder) {
     await fs.mkdir(fullPath(folder), {recursive: true});
 }
 
+async function pickNonConflictingName(file) {
+    try {
+        await fs.access(file, fs.constants.F_OK);
+
+        let extensionIndex = file.lastIndexOf(".");
+        let baseName = file.substring(0, extensionIndex);
+        let extension = file.substring(extensionIndex);
+        if (/-\d+$/.test(baseName)) {
+            let dashIndex = baseName.lastIndexOf("-");
+            let withoutNumber = baseName.substring(0, dashIndex);
+            let number = parseInt(baseName.substring(dashIndex+1));
+            return pickNonConflictingName(withoutNumber + "-" + (number + 1).toString() + extension);
+        } else {
+            return pickNonConflictingName(baseName + "-1" + extension);
+        }
+    } catch (error) {
+        return file;
+    }
+}
+
 exports.initialize = initialize;
 exports.updateBaseDir = updateBaseDir;
 exports.getFiles = getFiles;
@@ -115,3 +135,4 @@ exports.isDirectory = isDirectory;
 exports.renameFile = renameFile;
 exports.deleteFile = deleteFile;
 exports.mkdir = mkdir;
+exports.pickNonConflictingName = pickNonConflictingName;

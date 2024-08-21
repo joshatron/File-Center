@@ -164,11 +164,11 @@ app.post('/api/web/upload/*', function(request, response) {
 });
 
 function handleUpload(request, response) {
-    var busboy = new Busboy({ headers: request.headers });
+    var busboy = Busboy({ headers: request.headers });
     let folder = path.join(config.getConfig().dir, request.url.substring(16));
     busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
-        var saveTo = path.join(folder, filename);
-        file.pipe(fs.createWriteStream(saveTo));
+        fileOperations.pickNonConflictingName(path.join(folder, filename.filename))
+            .then(function(f) {file.pipe(fs.createWriteStream(f))});
     });
 
     busboy.on('finish', function() {
